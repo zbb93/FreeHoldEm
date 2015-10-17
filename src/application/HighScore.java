@@ -1,6 +1,9 @@
+package application;
+//So we can sort them in arrayList
 public class HighScore {
 	private final String name;
 	private final int score;
+	public final static String HIGHSCORE_DELIMITER = "     ";
 	
 	public HighScore(String name, int score) {
 		this.name = name;
@@ -24,8 +27,9 @@ public class HighScore {
 	public String toString() {
 		String asString = new String("");
 		asString += name;
-		asString += "     ";
+		asString += HIGHSCORE_DELIMITER;
 		asString += Integer.toString(score);
 		return asString;
 	}
+
 }

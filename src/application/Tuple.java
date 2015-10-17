@@ -1,3 +1,4 @@
+package application;
 public class Tuple {
 
     public int x;
