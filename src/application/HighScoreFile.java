@@ -23,13 +23,11 @@ public class HighScoreFile {
 		//If file exists, try to load highscores into highscores variable.
 		if (highScoreFile.exists()) {
 			loadFile();
+			sortHighScores();
 		}
 		else {
 			try {
 				highScoreFile.createNewFile();
-				System.out.println("Creating new highscore file: " + this.path.toString());
-				System.out.println("Adding example players..");
-				this.writeFewPlayers();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -38,10 +36,22 @@ public class HighScoreFile {
 		}
 		
 	}
+	
+	/**
+	 * Returns List of Highscores
+	 */
+	public ArrayList<HighScore> getHighScoreList() {
+		return highscores;
+	}
 	public void addHighScore(HighScore h) {
 		highscores.add(h);
 	}
-	
+	public int numberOfHighScores() {
+		return highscores.size();
+	}
+	/**
+	 * Sorts loaded highscores by descending order.
+	 */
 	public void sortHighScores() {
 		
 		Collections.sort(highscores, new Comparator<HighScore>() {
@@ -58,10 +68,19 @@ public class HighScoreFile {
 	public boolean exists() {
 		return highScoreFile.exists();
 	}
+	/**
+	 * Deletes highscore file.
+	 */
 	public void delete() {
-		highScoreFile.delete();
+		if(highScoreFile.exists()) {
+			highScoreFile.delete();
+		}
+		
 	}
-	public String getHighScore(String name) {
+	/**
+	 * Gets first highscore by player name.
+	 */
+	public String getHighScoreByPlayer(String name) {
 		if(!highscores.isEmpty()) {
 			for (Iterator<HighScore> iterator = highscores.iterator(); iterator.hasNext();) {
 				HighScore highScore = (HighScore) iterator.next();
@@ -73,6 +92,9 @@ public class HighScoreFile {
 		}
 		return "No highscore found.";
 	}
+	/**
+	 * Writes all highscores from variable "highscores" to file.
+	 */
 	public void writePlayersIntoFile() {
 		BufferedWriter writer = null;
 		try {
@@ -98,6 +120,9 @@ public class HighScoreFile {
 			}
 		}
 	}
+	/**
+	 * Loads saved highscores from file.
+	 */
 	public ArrayList<HighScore> loadHighScores(Scanner scoreScanner) {
 		ArrayList<HighScore> highscores = new ArrayList<HighScore>(10);
 		//Read previous highscores
@@ -116,7 +141,14 @@ public class HighScoreFile {
 		
 		return highscores;
 	}
-	private void writeFewPlayers() {
+	/**
+	 * Creates dummy highscores if there is no previous ones.
+	 */
+	public void writeDummyHighScoresIfNecessary() {
+		//If there is actual highscores already
+		if (highscores.size() > 0 ) {
+			return;
+		}
 		BufferedWriter writer = null;
 		try {
 			
@@ -124,8 +156,11 @@ public class HighScoreFile {
 			int [] bets = new int[]{666, 100, 250, 500, 750, 875, 950, 1075, 1200, 1340, 1500};
 			writer = new BufferedWriter(new FileWriter(this.path));
 			for (int i = 0; i < bets.length; i++) {
-				writer.write(new HighScore(strs[i], bets[i]).toString() );
+				HighScore h = new HighScore(strs[i], bets[i]);
+				writer.write(h.toString() );
 				writer.newLine();
+				//add highscore also in the list
+				highscores.add(h);
 			}
 		}
 		catch (IOException e) {
@@ -142,6 +177,9 @@ public class HighScoreFile {
 			}
 		}
 	}
+	/**
+	 * Loads saved highscores from file.
+	 */
 	public void loadFile() {
 		// TODO Auto-generated method stub
 		Scanner scoreScanner;
@@ -154,4 +192,5 @@ public class HighScoreFile {
 			e.printStackTrace();
 		}
 	}
+	
 }

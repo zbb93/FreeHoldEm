@@ -16,6 +16,8 @@ package application;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
        
+import java.io.IOException;
+import java.util.ArrayList;
 /*
  * TODO: Test ace low implementation	  
  * TODO: Create window containing background image (poker table)
@@ -27,15 +29,11 @@ package application;
  *       from folding if there is nothing else in your hand.)
  */
 import java.util.Scanner;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 /**
  * @author Zachary Bowen
  */
 public class FreeHoldEm {
+	
     /**
      * Array of players. As players run out of chips they are not removed from the
      * array, but they are permanently folded.   
@@ -61,17 +59,22 @@ public class FreeHoldEm {
 	 */
 	private static Scanner sc = new Scanner(System.in);
 	/**
-	 * Array to store the current high scores.
+	 * Array to store the current high scores. It is initialized in assignHighScores function.
 	 */
-	private static HighScore[] highScores = new HighScore[10];
+	private static HighScore[] highScores;
     /**
      * Handles highScore file I/O.   
      */
 	private static HighScoreFile highScoreFile;
 	
+	
 	public static void main(String[] args) throws IOException {
-		//Creates a new file or loads a existing file.
+		//Creates a new file or loads a existing file. 
 		highScoreFile = new HighScoreFile("high_scores.dat");
+		//Creates dummy highscores if there are no previous highscores.
+		highScoreFile.writeDummyHighScoresIfNecessary();
+		assignHighScores(highScoreFile);
+		
 		System.out.print("Number of players (2 - 8): ");
 		int numberPlayers = sc.nextInt();                
 		players = new Player[numberPlayers];
@@ -82,7 +85,21 @@ public class FreeHoldEm {
 		}
 		play();
 	}
-       
+	/**
+	 * Assigns loaded highscores into highScores array.
+	 * @param hf = HighScoreFile
+	 */
+    private static void assignHighScores(HighScoreFile hf) {
+
+    	ArrayList<HighScore> list = hf.getHighScoreList();
+    	//Create a dynamic highscore array based on loaded highscores.
+    	highScores = new HighScore[list.size()];
+    	int i = 0;
+    	for (HighScore highScore : list) {
+			highScores[i] = highScore;
+			i++;
+		}
+    }
 	private static void play() {
 		Deck deck = new Deck();
 		deal(deck);
@@ -795,7 +812,8 @@ public class FreeHoldEm {
 	 * made a high score the high scores are displayed and the game exits.
 	 */
 	private static void endGame() {
-		if (players[0].getChips() > highScores[highScores.length - 1].getScore()) {
+		//As they have sorted to descending order.
+		if (players[0].getChips() > highScores[0].getScore()) {
 			writeNewScore();
 		}
 		else {
@@ -827,7 +845,7 @@ public class FreeHoldEm {
 		highScoreFile.addHighScore(prev);
 		//Sorts HighScores to descending order
 		highScoreFile.sortHighScores();
-		//Write loaded and new highScore into file.
+		//Write highScores into file.
 		highScoreFile.writePlayersIntoFile();
 	}
 }
