@@ -1,3 +1,4 @@
+package application;
 /*
  * FreeHoldEm
  * Copyright 2015 by Zachary Bowen
@@ -15,6 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
        
+import java.io.IOException;
+import java.util.ArrayList;
 /*
  * TODO: Test ace low implementation	  
  * TODO: Create window containing background image (poker table)
@@ -26,15 +29,11 @@
  *       from folding if there is nothing else in your hand.)
  */
 import java.util.Scanner;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 /**
  * @author Zachary Bowen
  */
 public class FreeHoldEm {
+	
     /**
      * Array of players. As players run out of chips they are not removed from the
      * array, but they are permanently folded.   
@@ -60,33 +59,22 @@ public class FreeHoldEm {
 	 */
 	private static Scanner sc = new Scanner(System.in);
 	/**
-	 * Array to store the current high scores.
+	 * Array to store the current high scores. It is initialized in assignHighScores function.
 	 */
-	private static HighScore[] highScores = new HighScore[10];
-       
+	private static HighScore[] highScores;
+    /**
+     * Handles highScore file I/O.   
+     */
+	private static HighScoreFile highScoreFile;
+	
+	
 	public static void main(String[] args) throws IOException {
-		File highScoreFile = new File("high_scores.dat");
-		if (highScoreFile.exists()) {
-			Scanner scoreScanner = new Scanner(highScoreFile);
-			for (int i = 0; i < highScores.length; i++) {
-				highScores[i] = new HighScore(scoreScanner.next(), 
-				scoreScanner.nextInt());
-			}
-		}
-		else {
-			highScoreFile.createNewFile();
-			//Fill high score array with initial values
-			highScores[9] = new HighScore("Bob", 100);
-			highScores[8] = new HighScore("Jill", 250);
-			highScores[7] = new HighScore("Justin", 500);
-			highScores[6] = new HighScore("David", 750);
-			highScores[5] = new HighScore("Tyler", 875);
-			highScores[4] = new HighScore("John", 950);
-			highScores[3] = new HighScore("Tricia", 1075);
-			highScores[2] = new HighScore("John", 1200);
-			highScores[1] = new HighScore("Chris", 1340);
-			highScores[0] = new HighScore("Becca", 1500);	
-		}
+		//Creates a new file or loads a existing file. 
+		highScoreFile = new HighScoreFile("high_scores.dat");
+		//Creates dummy highscores if there are no previous highscores.
+		highScoreFile.writeDummyHighScoresIfNecessary();
+		assignHighScores(highScoreFile);
+		
 		System.out.print("Number of players (2 - 8): ");
 		int numberPlayers = sc.nextInt();                
 		players = new Player[numberPlayers];
@@ -97,7 +85,21 @@ public class FreeHoldEm {
 		}
 		play();
 	}
-       
+	/**
+	 * Assigns loaded highscores into highScores array.
+	 * @param hf = HighScoreFile
+	 */
+    private static void assignHighScores(HighScoreFile hf) {
+
+    	ArrayList<HighScore> list = hf.getHighScoreList();
+    	//Create a dynamic highscore array based on loaded highscores.
+    	highScores = new HighScore[list.size()];
+    	int i = 0;
+    	for (HighScore highScore : list) {
+			highScores[i] = highScore;
+			i++;
+		}
+    }
 	private static void play() {
 		Deck deck = new Deck();
 		deal(deck);
@@ -810,7 +812,8 @@ public class FreeHoldEm {
 	 * made a high score the high scores are displayed and the game exits.
 	 */
 	private static void endGame() {
-		if (players[0].getChips() > highScores[highScores.length - 1].getScore()) {
+		//As they have sorted to descending order.
+		if (players[0].getChips() > highScores[0].getScore()) {
 			writeNewScore();
 		}
 		else {
@@ -839,26 +842,10 @@ public class FreeHoldEm {
 		for (int i = 0; i < highScores.length; i++) {
 			System.out.println(highScores[i].toString());
 		}
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new FileWriter("high_scores.dat"));
-			for (int i = 0; i < highScores.length; i++) {
-				writer.write(highScores[i].toString());
-				writer.newLine();
-			}
-		}
-		catch (IOException e) {
-			System.err.println(e);
-		}
-		finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				}
-				catch (IOException e) {
-					System.err.println(e);
-				}
-			}
-		}
+		highScoreFile.addHighScore(prev);
+		//Sorts HighScores to descending order
+		highScoreFile.sortHighScores();
+		//Write highScores into file.
+		highScoreFile.writePlayersIntoFile();
 	}
 }

@@ -1,3 +1,4 @@
+package application;
 /*
  * Represents a player in a card game, can be either
  * CPU or human
