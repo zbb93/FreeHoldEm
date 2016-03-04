@@ -61,7 +61,7 @@ public class HighScoreFile {
 	        	//Descending order. If you want ascending order return first - second.
 	        	int first = h1.getScore();
 	        	int second = h2.getScore();
-	            return  second - first;
+	          return  second - first;
 	        }
 	    });
 	}
@@ -82,13 +82,13 @@ public class HighScoreFile {
 	 */
 	public String getHighScoreByPlayer(String name) {
 		if(!highscores.isEmpty()) {
-			for (Iterator<HighScore> iterator = highscores.iterator(); iterator.hasNext();) {
-				HighScore highScore = (HighScore) iterator.next();
-
-				if ( highScore.getName().equals(name)) {
-					return highScore.toString();
-				}
-			}
+		  Iterator<HighScore> iterator = highscores.iterator();
+		  while (iterator.hasNext()) {
+		    HighScore highScore = iterator.next();
+		    if (highScore.getName().equals(name)) {
+		      return highScore.toString();
+		    }
+		  }
 		}
 		return "No highscore found.";
 	}
@@ -99,10 +99,18 @@ public class HighScoreFile {
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter(path));
+			/*
 			for (Iterator<HighScore> iterator = highscores.iterator(); iterator.hasNext();) {
 				HighScore highScore = (HighScore) iterator.next();
 				writer.write(highScore.toString() );
 				writer.newLine();
+			}*/
+			int count = 0;
+			Iterator<HighScore> iterator = highscores.iterator();
+			while (iterator.hasNext() && count < 10) {
+			  HighScore hs = iterator.next();
+			  writer.write(hs.toString());
+			  count++;
 			}
 
 		}
@@ -115,7 +123,8 @@ public class HighScoreFile {
 					writer.close();
 				}
 				catch (IOException e) {
-					System.err.println(e);
+					//System.err.println(e);
+				  e.printStackTrace();
 				}
 			}
 		}
@@ -136,7 +145,8 @@ public class HighScoreFile {
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-			System.err.println(e);
+			//System.err.println(e);
+		  e.printStackTrace();
 		}
 		
 		return highscores;
@@ -164,7 +174,8 @@ public class HighScoreFile {
 			}
 		}
 		catch (IOException e) {
-			System.err.println(e);
+			//System.err.println(e);
+		  e.printStackTrace();
 		}
 		finally {
 			if (writer != null) {
@@ -172,7 +183,8 @@ public class HighScoreFile {
 					writer.close();
 				}
 				catch (IOException e) {
-					System.err.println(e);
+				  e.printStackTrace();
+					//System.err.println(e);
 				}
 			}
 		}
@@ -191,6 +203,15 @@ public class HighScoreFile {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public String toString() {
+	  Iterator<HighScore> iterator = highscores.iterator();
+	  String hsAsString = "";
+	  while (iterator.hasNext()) {
+	    hsAsString += iterator.next().toString();
+	  }
+	  return hsAsString;
 	}
 	
 }

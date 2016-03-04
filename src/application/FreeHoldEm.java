@@ -81,42 +81,26 @@ public class FreeHoldEm {
 			players[i] = new Player("CPU" +
 					String.valueOf(i));
 		}
+		players[0].setChips(1000);
 		play();
 	}
-	/*
-	public static void main(String[] args) throws IOException {
-		//Creates a new file or loads a existing file. 
-		highScoreFile = new HighScoreFile("high_scores.dat");
-		//Creates dummy highscores if there are no previous highscores.
-		highScoreFile.writeDummyHighScoresIfNecessary();
-		assignHighScores(highScoreFile);
-		
-		System.out.print("Number of players (2 - 8): ");
-		int numberPlayers = sc.nextInt();                
-		players = new Player[numberPlayers];
-		players[0] = new Player("human");
-		for (int i = 1; i < players.length; i++) {
-			players[i] = new Player("CPU" +
-					String.valueOf(i));
-		}
-		play();
-	}*/
+	
 	/**
 	 * Assigns loaded highscores into highScores array.
 	 * @param hf = HighScoreFile
 	 */
-    private void assignHighScores(HighScoreFile hf) {
+	private void assignHighScores(HighScoreFile hf) {
 
-    	ArrayList<HighScore> list = hf.getHighScoreList();
-    	//Create a dynamic highscore array based on loaded highscores.
-    	highScores = new HighScore[list.size()];
-    	int i = 0;
-    	for (HighScore highScore : list) {
-			highScores[i] = highScore;
-			i++;
-		}
-    }
-       
+	  ArrayList<HighScore> list = hf.getHighScoreList();
+	  //Create a dynamic highscore array based on loaded highscores.
+	  highScores = new HighScore[list.size()];
+	  int i = 0;
+	  for (HighScore highScore : list) {
+	    highScores[i] = highScore;
+	    i++;
+	  }
+	}
+
 	private void play() {
 		Deck deck = new Deck();
 		int j = 0;
@@ -312,7 +296,7 @@ public class FreeHoldEm {
 	 */
 	private void endGame() {
 		//As they have sorted to descending order.
-		if (players[0].getChips() > highScores[0].getScore()) {
+		if (players[0].getChips() > highScores[highScores.length-1].getScore()) {
 			writeNewScore();
 		}
 		else {
@@ -321,6 +305,8 @@ public class FreeHoldEm {
 				System.out.println(highScores[i].toString());
 			}
 		}
+		System.exit(0);
+		
 	}
 	/**
 	 * This method creates a new HighScore for the player and inserts it into the 
@@ -330,6 +316,7 @@ public class FreeHoldEm {
 	private void writeNewScore() {
 		System.out.printf("High Score!\nEnter your name: ");
 		String name = sc.next();
+		/*
 		HighScore prev = new HighScore(name, players[0].getChips());
 		for (int i = 0; i < highScores.length; i++) {
 			if (prev.getScore() > highScores[i].getScore()) {
@@ -340,12 +327,14 @@ public class FreeHoldEm {
 		}
 		for (int i = 0; i < highScores.length; i++) {
 			System.out.println(highScores[i].toString());
-		}
-		highScoreFile.addHighScore(prev);
+		}*/
+		HighScore newHighScore = new HighScore(name, players[0].getChips());
+		highScoreFile.addHighScore(newHighScore);
 		//Sorts HighScores to descending order
 		highScoreFile.sortHighScores();
 		//Write highScores into file.
 		highScoreFile.writePlayersIntoFile();
+		System.out.println(highScoreFile.toString());
 	}
 	
 	public Card[] getCardsOnTable() {
