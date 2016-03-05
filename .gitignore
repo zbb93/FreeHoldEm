@@ -1,1 +1,12 @@
 /bin/
+
+#eclipse stuff
+.settings/
+.classpath
+.project
+
+#high score file
+high_scores.dat
+
+#ctags
+src/application/tags
