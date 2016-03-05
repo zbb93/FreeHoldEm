@@ -99,12 +99,6 @@ public class HighScoreFile {
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter(path));
-			/*
-			for (Iterator<HighScore> iterator = highscores.iterator(); iterator.hasNext();) {
-				HighScore highScore = (HighScore) iterator.next();
-				writer.write(highScore.toString() );
-				writer.newLine();
-			}*/
 			int count = 0;
 			Iterator<HighScore> iterator = highscores.iterator();
 			while (iterator.hasNext() && count < 10) {
@@ -136,7 +130,7 @@ public class HighScoreFile {
 		ArrayList<HighScore> highscores = new ArrayList<HighScore>(10);
 		//Read previous highscores
 		try {
-			while ( scoreScanner.hasNext() ) {
+			while (scoreScanner.hasNext()) {
 				//Read file line
 				String line = scoreScanner.nextLine();
 				//parts[0] is name, parts[1] is score
@@ -147,8 +141,7 @@ public class HighScoreFile {
 			// TODO: handle exception
 			//System.err.println(e);
 		  e.printStackTrace();
-		}
-		
+		}	
 		return highscores;
 	}
 	/**
@@ -160,15 +153,13 @@ public class HighScoreFile {
 			return;
 		}
 		BufferedWriter writer = null;
-		try {
-			
+		try {			
 			String [] strs = new String[]{"Alice", "Bob", "Jill", "Justin", "David", "Tyler", "John", "Tricia", "John", "Chris", "Becca"};
-			int [] bets = new int[]{666, 100, 250, 500, 750, 875, 950, 1075, 1200, 1340, 1500};
+			int [] scores = new int[]{666, 100, 250, 500, 750, 875, 950, 1075, 1200, 1340, 1500};
 			writer = new BufferedWriter(new FileWriter(this.path));
-			for (int i = 0; i < bets.length; i++) {
-				HighScore h = new HighScore(strs[i], bets[i]);
+			for (int i = 0; i < scores.length; i++) {
+				HighScore h = new HighScore(strs[i], scores[i]);
 				writer.write(h.toString() );
-				writer.newLine();
 				//add highscore also in the list
 				highscores.add(h);
 			}

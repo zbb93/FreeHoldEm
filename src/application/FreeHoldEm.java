@@ -81,7 +81,6 @@ public class FreeHoldEm {
 			players[i] = new Player("CPU" +
 					String.valueOf(i));
 		}
-		players[0].setChips(1000);
 		play();
 	}
 	
@@ -301,9 +300,7 @@ public class FreeHoldEm {
 		}
 		else {
 			//display high scores
-			for (int i = 0; i < highScores.length; i++) {
-				System.out.println(highScores[i].toString());
-			}
+			System.out.println(highScoreFile.toString());
 		}
 		System.exit(0);
 		
