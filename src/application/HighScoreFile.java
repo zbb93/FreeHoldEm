@@ -155,7 +155,7 @@ public class HighScoreFile {
 		BufferedWriter writer = null;
 		try {			
 			String [] strs = new String[]{"Alice", "Bob", "Jill", "Justin", "David", "Tyler", "John", "Tricia", "John", "Chris", "Becca"};
-			int [] scores = new int[]{666, 100, 250, 500, 750, 875, 950, 1075, 1200, 1340, 1500};
+			int [] scores = new int[]{100, 250, 500, 666, 750, 875, 950, 1075, 1200, 1340, 1500};
 			writer = new BufferedWriter(new FileWriter(this.path));
 			for (int i = 0; i < scores.length; i++) {
 				HighScore h = new HighScore(strs[i], scores[i]);
