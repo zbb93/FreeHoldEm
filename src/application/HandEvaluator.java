@@ -286,8 +286,15 @@ private Tuple containsStraightFlush(Card[] hand) {
 				  newHand[i] = sortedMatches[index.y - i];
 			  }
 			  return newHand;
+		  } else if(index.y > 0 && index.x == 2) {
+			  Card[] newHand = new Card[5];
+			  newHand[0] = sortedMatches[0];
+			  for (int i = 1; i < newHand.length; i++) {
+				  newHand[i] = sortedMatches[index.y - (i - 1)];
+			  }
+			  return newHand;
 		  } else {
-			  return null;
+			  return null;			
 		  }
 	  } else {
 		  return null;
