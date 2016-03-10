@@ -70,7 +70,7 @@ public class StraightTests {
 		FreeHoldEm game = new FreeHoldEm(table);
 		HandEvaluator he = new HandEvaluator();
 		he.findBestHand(game, p);
-		Card[] expectedCards = {card3, card5, card7, card4, card1};
+		Card[] expectedCards = {card1, card3, card5, card7, card4};
 		Hand expectedHand = new Hand(expectedCards);
 		assertEquals(0, expectedHand.compareTo(p.getHand()));
 		System.out.println(p.getHand().toString());

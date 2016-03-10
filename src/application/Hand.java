@@ -57,9 +57,14 @@ public class Hand {
 			}
 		}
 		if (ranks[10] == 1 && ranks[11] == 1 && ranks[12] == 1 && 
-				ranks[13] == 1 && ranks[1] == 1) {
+				ranks[13] == 1 && ranks[14] == 1) {
 			straight = true;
 			straightHighVal = 14;
+		}
+		if (ranks[14] == 1 && ranks[2] == 1 && ranks[3] == 1 && 
+				ranks[4] == 1 && ranks[5] == 1) {
+			straight = true;
+			straightHighVal = 5;
 		}
 		int[] orderedRanks = new int[5];
 		int index = 0;
