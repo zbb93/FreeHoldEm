@@ -1,4 +1,7 @@
 package application;
+
+import java.util.LinkedList;
+
 /*
  * Class to handle evaluation of hands. One publicly exposed method accepts a player and a 
  * collection(specify) of cards. This method then calls the private methods to determine what
@@ -25,24 +28,9 @@ public class HandEvaluator {
 	   *any necessary high cards are also grabbed
 	   *If no hand is found a hand is constructed from high cards
 	   */
-	  Tuple indices = containsStraightFlush(sortedCards);
-	  //normal straight
-	  if (indices.x == 1 && indices.y > 0) {
-		  Card[] hand = new Card[5];
-		  for (int i = 0; i < hand.length; i++) {
-			  hand[i] = sortedCards[indices.y - i];
-		  }
-		  buildHand(hand, player);
-		  return;
-	  }
-	  //ace low straight
-	  else if (indices.x == 2 && indices.y > 0) {
-		  Card[] hand = new Card[5];
-		  hand[0] = sortedCards[0];
-		  for (int i = 1; i < hand.length; i++) {
-			  hand[i] = sortedCards[indices.y - (i -1)];
-		  }
-		  buildHand(hand, player);
+	  Card[] sfHand = containsStraightFlush(sortedCards);
+	  if (!(sfHand.equals(null))) {
+		  buildHand(sfHand, player);
 		  return;
 	  }
 	  int index = containsFourOfAKind(sortedCards);
@@ -63,7 +51,7 @@ public class HandEvaluator {
 		  return;
 	  }
 
-	  indices = containsFullHouse(sortedCards);
+	  Tuple indices = containsFullHouse(sortedCards);
 	  if (indices.x != -1 && indices.y != -1) {
 		  Card[] hand = new Card[5];
 		  for (int i = 0; i < 3; i++) {
@@ -96,7 +84,6 @@ public class HandEvaluator {
 		  buildHand(hand, player);
 		  return;
 	  }
-
 	  String suit = containsFlush(sortedCards);
 	  if (suit != null) {
 		  Card[] hand = new Card[5];
@@ -254,7 +241,7 @@ public class HandEvaluator {
    * @return A tuple of (-1,-1) if there is no straight flush (1, index) if there
    * is a normal straight. Index here is the index of the lowest card in the
    * straight. If an ace low straight is present return (2, index).
-   */
+   *
 private Tuple containsStraightFlush(Card[] hand) {
   Tuple index = containsStraight(hand);
   if (index.y > 0 && index.x == 1) {
@@ -277,7 +264,35 @@ private Tuple containsStraightFlush(Card[] hand) {
       return (new Tuple(2, index.y));
   }
   return (new Tuple(-1, -1));
-}
+}*/
+  private Card[] containsStraightFlush(Card[] hand) {
+	  String suit = containsFlush(hand);
+	  if (suit != null) {
+		  LinkedList<Card> matchingSuit = new LinkedList<Card>();
+		  for (int i = 0; i < hand.length; i++) {
+			  if (hand[i].getSuit().equals(suit)) {
+				  matchingSuit.add(hand[i]);
+			  }
+		  }
+		  Card[] matchingSuitArr = new Card[matchingSuit.size()];
+		  for (int i = 0; i < matchingSuitArr.length; i++) {
+			  matchingSuitArr[i] = matchingSuit.get(i);
+		  }
+		  Card[] sortedMatches = sortHand(matchingSuitArr);
+		  Tuple index = containsStraight(sortedMatches);
+		  if (index.y > 0 && index.x == 1) {
+			  Card[] newHand = new Card[5];
+			  for (int i = 0; i < newHand.length; i++) {
+				  newHand[i] = sortedMatches[index.y - i];
+			  }
+			  return newHand;
+		  } else {
+			  return null;
+		  }
+	  } else {
+		  return null;
+	  }
+  }
   /**
    * Tests whether a hand contains four of the same card.   
    * @param hand The hand to be tested.
