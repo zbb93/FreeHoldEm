@@ -69,6 +69,8 @@ public class FreeHoldEm {
 	
 	private HandEvaluator he = new HandEvaluator();
 	
+	private Deck deck = new Deck();
+	
 	/**
 	 * Constructor used for testing purposes. The game will be initialized with
 	 * the cards passed to the constructor.
@@ -108,8 +110,58 @@ public class FreeHoldEm {
 	  }
 	}
 
+	public void dealHands() {
+		for (int i = 0; i < players.length; i++) {
+			if (players[i].checkFold()) {
+				System.out.printf("%s is out of chips!", players[i].getName());
+			}
+			else {
+				players[i].setCards(0, deck.getNextCard());
+				players[i].setCards(1, deck.getNextCard());
+				if (i == 0) {
+					System.out.println("Your hand: " +
+							players[i].toString()); 
+				} 
+				else {
+					System.out.println(players[i].getName() +
+							": " + players[i].toString()); 
+				}      
+			}
+		}
+	}
+	
+	public void dealFlop() {
+		cardsOnTable[0] = deck.getNextCard(); 
+		cardsOnTable[1] = deck.getNextCard(); 
+		cardsOnTable[2] = deck.getNextCard();
+		Card[] yourHand = players[0].getCards();
+		System.out.printf("Your Cards: %s, %s\n", yourHand[0].toString(), 
+				yourHand[1].toString());
+		System.out.printf("Flop: %s, %s, %s\n", cardsOnTable[0], 
+				cardsOnTable[1], cardsOnTable[2]);
+		System.out.println("Cash in pot: " + pot);
+	}
+	
+	public void dealTurn() {
+		cardsOnTable[3] = deck.getNextCard();
+		Card[] yourHand = players[0].getCards();
+		System.out.printf("Your Cards: %s, %s\n", yourHand[0].toString(), yourHand[1].toString());
+		System.out.printf("Turn: %s, %s, %s, %s\n", cardsOnTable[0], cardsOnTable[1], 
+				cardsOnTable[2], cardsOnTable[3]);
+		System.out.println("Cash in pot: " + pot);
+	}
+	
+	public void dealRiver() {
+		Card[] yourHand = players[0].getCards();
+		cardsOnTable[4] = deck.getNextCard();
+		System.out.printf("Your Cards: %s, %s\n", yourHand[0].toString(), yourHand[1].toString());
+		System.out.printf("River: %s, %s, %s, %s, %s\n", cardsOnTable[0], cardsOnTable[1], 
+				cardsOnTable[2], cardsOnTable[3], cardsOnTable[4]);
+		System.out.println("Cash in pot: " + pot);
+	}
+	
 	private void play() {
-		Deck deck = new Deck();
+		//Deck deck = new Deck();
 		int j = 0;
 		//Deal player hands
 		for (int i = 0; i < players.length; i++) {
