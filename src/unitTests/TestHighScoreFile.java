@@ -47,7 +47,7 @@ public class TestHighScoreFile {
 		file.addHighScore(new HighScore("Mark", 555));
 		file.writePlayersIntoFile();
 		file.loadFile();
-		assertEquals("Mark" + HighScore.HIGHSCORE_DELIMITER + "555", file.getHighScoreByPlayer("Mark"));
+		assertEquals("Mark" + HighScore.HIGHSCORE_DELIMITER + "555\n", file.getHighScoreByPlayer("Mark"));
 	}
 	
 	@After

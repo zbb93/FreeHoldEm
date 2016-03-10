@@ -81,8 +81,6 @@ public class HandEvaluator {
 	  if (indices.x == 1) {
 		  Card[] hand = new Card[5];
 		  for (int i = 0; i < hand.length; i++) {
-			  System.out.printf("Player: %s", player.getName());
-			  System.out.printf("Tuple: %d %d\n", indices.x, indices.y);
 			  hand[i] = sortedCards[indices.y - i];
 		  }
 		  buildHand(hand, player);

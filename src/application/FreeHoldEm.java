@@ -69,6 +69,14 @@ public class FreeHoldEm {
 	
 	private HandEvaluator he = new HandEvaluator();
 	
+	/**
+	 * Constructor used for testing purposes. The game will be initialized with
+	 * the cards passed to the constructor.
+	 * @param cards - Array of cards representing cards currently on the table.
+	 */
+	public FreeHoldEm(Card[] cards) {
+		this.cardsOnTable = cards;
+	}
 	public FreeHoldEm(int numPlayers) {
 		//Creates a new file or loads a existing file. 
 		highScoreFile = new HighScoreFile("high_scores.dat");
