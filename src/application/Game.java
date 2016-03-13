@@ -10,21 +10,39 @@ public class Game {
 		boolean playing = true;
 		while (playing) {
 			game.dealHands();
-			game.takeBets();
+			System.out.println(game.toString());
+			betLoop(game);
 			game.dealFlop();
-			game.takeBets();
+			System.out.println(game.toString());
+			betLoop(game);
 			game.dealTurn();
-			game.takeBets();
+			System.out.println(game.toString());
+			betLoop(game);
 			game.dealRiver();
-			game.takeBets();
+			System.out.println(game.toString());
+			betLoop(game);
 			game.pickWinner();
 			System.out.print("Would you like to play another hand? (y/n):");
 			String response = sc.next();
 			if (response.equals("n")) {
 				playing = false;
+			} else {
+				game.newHand();
 			}
 		}
 		game.cleanUp();
 		
 	}
+	private static void betLoop(FreeHoldEm game) {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Enter your bet:");
+		int playerBet = sc.nextInt();
+		game.bet(playerBet);
+		if (game.bettingComplete()) {
+			return;
+		} else {
+			betLoop(game);
+		}
+	}
 }
+

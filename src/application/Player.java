@@ -16,6 +16,7 @@ public class Player {
         private Hand finalHand;
         private int chips;
         private boolean isFolded;
+        private int betThisRound;    
 
         /**
          * Constructor for player. Each player starts with 500 chips.
@@ -24,7 +25,8 @@ public class Player {
         public Player(String name) {
         	this.name = name;
         	this.chips = 500;
-        	this.isFolded = false;    
+        	this.isFolded = false;
+        	this.betThisRound = 0;
         }
 
         /**
@@ -109,6 +111,24 @@ public class Player {
         	
         	return this.isFolded;
         }
+        
+        public boolean hasBet() {
+        	return (this.betThisRound > 0);
+        }
+        
+        public void bet(int amount) {
+        	this.betThisRound += amount;
+        	this.chips -= amount;
+        }
+        
+        public void resetBet() {
+        	this.betThisRound = 0;
+        }
+        
+        public int getBetThisRound() {
+        	return this.betThisRound;
+        }
+
         @Override
         /**
          * Converts player hand to a string value.

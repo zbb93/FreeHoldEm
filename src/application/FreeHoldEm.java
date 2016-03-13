@@ -33,7 +33,9 @@ import java.util.Scanner;
  * @author Zachary Bowen
  */
 public class FreeHoldEm {
-	
+	enum State {
+		FIRST, FLOP, TURN, RIVER
+	}
     /**
      * Array of players. As players run out of chips they are not removed from the
      * array, but they are permanently folded.   
@@ -48,7 +50,8 @@ public class FreeHoldEm {
 	 * Integer used to describe the current phase of the game. Used by the AI to
 	 * determine when the AI should fold when they have no hand.
 	 */
-	private int round = 1;
+	//private int round = 1;
+	private State round;
 	/**
 	 * Integer representing the current amount of chips that have been bet on
 	 * this hand.
@@ -71,6 +74,12 @@ public class FreeHoldEm {
 	
 	private Deck deck = new Deck();
 	
+	private boolean[] blinds;
+	
+	private int currentBet = 0;
+	private final int BIG_BLIND = 10;
+	private final int LITTLE_BLIND = 5;
+	
 	/**
 	 * Constructor used for testing purposes. The game will be initialized with
 	 * the cards passed to the constructor.
@@ -79,6 +88,7 @@ public class FreeHoldEm {
 	public FreeHoldEm(Card[] cards) {
 		this.cardsOnTable = cards;
 	}
+	
 	public FreeHoldEm(int numPlayers) {
 		//Creates a new file or loads a existing file. 
 		highScoreFile = new HighScoreFile("high_scores.dat");
@@ -91,7 +101,11 @@ public class FreeHoldEm {
 			players[i] = new Player("CPU" +
 					String.valueOf(i));
 		}
-		play();
+		blinds = new boolean[players.length];
+		blinds[0] = true;
+		blinds[1] = true;
+		round = State.FIRST;
+		//play();
 	}
 	
 	/**
@@ -158,6 +172,43 @@ public class FreeHoldEm {
 		System.out.printf("River: %s, %s, %s, %s, %s\n", cardsOnTable[0], cardsOnTable[1], 
 				cardsOnTable[2], cardsOnTable[3], cardsOnTable[4]);
 		System.out.println("Cash in pot: " + pot);
+	}
+	
+	public void bet(int playerBet) {		
+		boolean betting = true;
+		int i;
+		for (i = 0; i < blinds.length; i++) {
+			if (blinds[i]) {
+				players[i].bet(LITTLE_BLIND);
+				players[i + 1].bet(BIG_BLIND);
+				currentBet = BIG_BLIND;
+				i++;
+				break;
+			}
+		}
+		int stopAt = i;
+		i++;
+		while (betting) {
+			if (stopAt == i) {
+				if (players[i].getBetThisRound() == currentBet) {
+					betting = false;
+					break;
+				}
+			}
+			if (i < players.length && i != 0) {
+				int aiBet = determineAIBet(players[i]); 
+				if (aiBet < currentBet) {
+					players[i].bet(0);
+					players[i].fold();
+				} else {
+					players[i].bet(aiBet);
+				}
+			} else if (i == 0) {
+				determinePlayerBet();
+			} else {					
+				i = 0;
+			}				
+		}			
 	}
 	
 	private void play() {
@@ -270,7 +321,7 @@ public class FreeHoldEm {
 		System.out.print("Would you like to play another hand? ");
 		String ans = sc.next();
 		if ((ans.equals("yes") || ans.equals("Yes")) && players[0].getChips() > 0) {
-			round = 1;
+			round = State.FIRST;
 			play();	
 		}
 		else if (players[0].getChips() <= 0) {
@@ -339,13 +390,18 @@ public class FreeHoldEm {
 		else if (handVal > 1) {
 			return 30;
 		}
-		else if (round > 2){
+		else if (round != State.FIRST || round != State.FLOP) {
 			return 0;
 		}
 		else {
 			return 10;
 		}
    	    	 
+	}
+	
+	private int determinePlayerBet() {
+		int bet = 0;
+		return bet;
 	}
 	/**
 	 * Called from startNewGame() if player declines to play another round or is
@@ -373,18 +429,6 @@ public class FreeHoldEm {
 	private void writeNewScore() {
 		System.out.printf("High Score!\nEnter your name: ");
 		String name = sc.next();
-		/*
-		HighScore prev = new HighScore(name, players[0].getChips());
-		for (int i = 0; i < highScores.length; i++) {
-			if (prev.getScore() > highScores[i].getScore()) {
-				HighScore tmp = highScores[i];
-				highScores[i] = prev;
-				prev = tmp;
-			}
-		}
-		for (int i = 0; i < highScores.length; i++) {
-			System.out.println(highScores[i].toString());
-		}*/
 		HighScore newHighScore = new HighScore(name, players[0].getChips());
 		highScoreFile.addHighScore(newHighScore);
 		//Sorts HighScores to descending order
