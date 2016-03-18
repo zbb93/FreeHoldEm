@@ -1,4 +1,4 @@
-package application;
+package edu.uab.cis.zbb.FreeHoldEm;
 /*
  * FreeHoldEm
  * Copyright 2015 by Zachary Bowen

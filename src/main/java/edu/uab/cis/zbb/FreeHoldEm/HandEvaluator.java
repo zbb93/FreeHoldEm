@@ -1,4 +1,4 @@
-package application;
+package edu.uab.cis.zbb.FreeHoldEm;
 
 import java.util.LinkedList;
 
@@ -29,7 +29,7 @@ public class HandEvaluator {
 	   *If no hand is found a hand is constructed from high cards
 	   */
 	  Card[] sfHand = containsStraightFlush(sortedCards);
-	  if (!(sfHand.equals(null))) {
+	  if (sfHand != null) {
 		  buildHand(sfHand, player);
 		  return;
 	  }

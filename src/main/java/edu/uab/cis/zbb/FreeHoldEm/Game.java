@@ -1,4 +1,4 @@
-package application;
+package edu.uab.cis.zbb.FreeHoldEm;
 
 import java.util.ArrayList;
 import java.util.Scanner;

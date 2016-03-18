@@ -1,4 +1,4 @@
-package application;
+package edu.uab.cis.zbb.FreeHoldEm;
 //So we can sort them in arrayList
 public class HighScore {
 	private final String name;

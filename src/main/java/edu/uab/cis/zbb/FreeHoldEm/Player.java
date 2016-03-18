@@ -1,4 +1,4 @@
-package application;
+package edu.uab.cis.zbb.FreeHoldEm;
 /*
  * Represents a player in a card game, can be either
  * CPU or human

@@ -1,4 +1,4 @@
-package application;
+package edu.uab.cis.zbb.FreeHoldEm;
 /**
  * Simple class that represents a playing card.
  */

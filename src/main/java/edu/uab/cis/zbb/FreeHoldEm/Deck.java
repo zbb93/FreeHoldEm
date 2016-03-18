@@ -1,4 +1,4 @@
-package application;
+package edu.uab.cis.zbb.FreeHoldEm;
 /**
  * Represents traditional deck of 52 playing cards.
  */
