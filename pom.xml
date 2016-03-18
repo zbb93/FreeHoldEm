@@ -33,7 +33,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>application.Game</mainClass>
+          <mainClass>edu.uab.cis.zbb.FreeHoldEm.Game</mainClass>
           <arguments>
           </arguments>
         </configuration>
