@@ -10,3 +10,4 @@ high_scores.dat
 
 #ctags
 src/application/tags
+/target/
