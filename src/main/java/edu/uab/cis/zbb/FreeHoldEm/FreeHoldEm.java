@@ -28,6 +28,8 @@ import java.util.ArrayList;
  *       (example: a pair of fives on the river shouldn't keep you
  *       from folding if there is nothing else in your hand.)
  */
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Scanner;
 /**
  * @author Zachary Bowen
@@ -70,6 +72,8 @@ public class FreeHoldEm {
 	private boolean[] blinds;
 	
 	private int currentBet = 0;
+	private int bigBlindPlayer = 1;
+	private int smallBlindPlayer = 0;
 	private final int BIG_BLIND = 10;
 	private final int LITTLE_BLIND = 5;
 	
@@ -145,8 +149,39 @@ public class FreeHoldEm {
 				cardsOnTable[2], cardsOnTable[3], cardsOnTable[4]);
 		System.out.println("Cash in pot: " + pot);
 	}
-	
-	public void bet(int playerBet) {		
+
+	/**
+	 * Betting begins with player after the big blind.
+	 * If a bet has been made already the player can match the bet or raise
+	 * If a player raises the minimum raise becomes their raise and all future raises must be at least this size.
+	 * Betting continues and the remaining players must match the new bet.
+	 *
+	 */
+	public void bet() {
+		//TODO: Create a list of players that represents the betting order. This method can then be called
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		boolean betting = true;
 		int i;
 		for (i = 0; i < blinds.length; i++) {
@@ -176,7 +211,7 @@ public class FreeHoldEm {
 					players[i].bet(aiBet);
 				}
 			} else if (i == 0) {
-				determinePlayerBet();
+				Game.getBetFromPlayer();
 			} else {					
 				i = 0;
 			}				
@@ -210,6 +245,8 @@ public class FreeHoldEm {
 	
 	public void newHand() {
 		pot = 0;
+		bigBlindPlayer++;
+		smallBlindPlayer++;
 		for (int i = 0; i < players.length; i++) {
 			if (players[i].getChips() > 0) {
 				players[i].unFold();
@@ -282,10 +319,28 @@ public class FreeHoldEm {
 		}
    	    	 
 	}
-	
-	private int determinePlayerBet() {
-		int bet = 0;
-		return bet;
+
+	/**
+	 * This method sorts the players into the order they will bet in.
+	 * Players that have folded are not added to the list.
+	 * The player after the player that placed the big blind goes first and the big blind goes last.
+	 * @return a collection of players in the order they will bet.
+	 */
+	private Collection<Player> sortPlayersIntoBettingOrder() {
+		LinkedList<Player> playersInOrder = new LinkedList<>();
+		int i = bigBlindPlayer + 1;
+		while (playersInOrder.size() < players.length) {
+			if (!players[i].checkFold()) {
+				playersInOrder.add(players[i]);
+				//TODO: Maybe shouldn't be -1?
+				if (i < players.length - 1) {
+					i++;
+				} else {
+					i = 0;
+				}
+			}
+		}
+		return playersInOrder;
 	}
 
 	

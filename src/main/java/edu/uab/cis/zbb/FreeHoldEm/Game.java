@@ -51,13 +51,22 @@ public class Game {
 		}
 		
 	}
+
+	static int getBetFromPlayer() {
+		System.out.print("Enter your bet: ");
+		return sc.nextInt();
+	}
+
+	/**
+	 * Betting begins with player after the big blind.
+	 * If a bet has been made already the player can match the bet or raise
+	 * If a player raises the minimum raise becomes their raise and all future raises must be at least this size.
+	 * Betting continues and the remaining players must match the new bet.
+	 * @param game TODO: description
+	 */
 	private static void betLoop(FreeHoldEm game) {
-		System.out.print("Enter your bet:");
-		int playerBet = sc.nextInt();
-		game.bet(playerBet);
-		if (game.bettingComplete()) {
-			return;
-		} else {
+		game.bet();
+		if (!game.bettingComplete()) {
 			betLoop(game);
 		}
 	}
