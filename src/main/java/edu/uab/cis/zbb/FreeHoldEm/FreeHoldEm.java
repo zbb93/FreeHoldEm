@@ -121,6 +121,7 @@ public class FreeHoldEm {
 	}
 	
 	public void dealFlop() {
+		round = State.FLOP;
 		cardsOnTable[0] = deck.getNextCard(); 
 		cardsOnTable[1] = deck.getNextCard(); 
 		cardsOnTable[2] = deck.getNextCard();
@@ -133,6 +134,7 @@ public class FreeHoldEm {
 	}
 	
 	public void dealTurn() {
+		round = State.TURN;
 		cardsOnTable[3] = deck.getNextCard();
 		Card[] yourHand = players[0].getCards();
 		System.out.printf("Your Cards: %s, %s\n", yourHand[0].toString(), yourHand[1].toString());
@@ -142,6 +144,7 @@ public class FreeHoldEm {
 	}
 	
 	public void dealRiver() {
+		round = State.RIVER;
 		Card[] yourHand = players[0].getCards();
 		cardsOnTable[4] = deck.getNextCard();
 		System.out.printf("Your Cards: %s, %s\n", yourHand[0].toString(), yourHand[1].toString());
@@ -157,67 +160,85 @@ public class FreeHoldEm {
 	 * Betting continues and the remaining players must match the new bet.
 	 *
 	 */
-	public void bet() {
-		//TODO: Create a list of players that represents the betting order. This method can then be called
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		boolean betting = true;
-		int i;
-		for (i = 0; i < blinds.length; i++) {
-			if (blinds[i]) {
-				players[i].bet(LITTLE_BLIND);
-				players[i + 1].bet(BIG_BLIND);
-				currentBet = BIG_BLIND;
-				i++;
-				break;
+	public void initialBet() {
+		//Create a collection of players that represents the betting order.
+		Collection<Player> playersInOrder = sortPlayersIntoInitialBettingOrder();
+		players[smallBlindPlayer].deductChips(LITTLE_BLIND);
+		players[bigBlindPlayer].deductChips(BIG_BLIND);
+		currentBet = BIG_BLIND;
+		for (Player p : playersInOrder) {
+			//TODO: Ensure player bet is valid
+			if (p.getName().equals("human")) {
+				int playerBet = Game.getBetFromPlayer();
+				if (playerBet == 0) {
+					p.fold();
+				} else {
+					p.deductChips(playerBet);
+					pot += playerBet;
+					if (playerBet > currentBet) {
+						currentBet = playerBet;
+						bet(sortPlayersIntoBettingOrder(p));
+						break;
+					}
+				}
+			} else {
+				//Ensuring that the bet is valid is handled in determineAIBet method
+				int AIBet = determineAIBet(p);
+				if (AIBet == 0) {
+					p.fold();
+				} else if (AIBet < currentBet) {
+					p.fold();
+				} else {
+					p.deductChips(AIBet);
+					pot += AIBet;
+					if (AIBet > currentBet) {
+						currentBet = AIBet;
+						bet(sortPlayersIntoBettingOrder(p));
+						break;
+					}
+				}
 			}
 		}
-		int stopAt = i;
-		i++;
-		while (betting) {
-			if (stopAt == i) {
-				if (players[i].getBetThisRound() == currentBet) {
-					betting = false;
-					break;
+	}
+
+	public void bet(Collection<Player> playersInOrder) {
+		//Create a collection of players that represents the betting order.
+		for (Player p : playersInOrder) {
+			//TODO: Ensure player bet is valid
+			if (p.getName().equals("human")) {
+				int playerBet = Game.getBetFromPlayer();
+				if (playerBet == 0) {
+					p.fold();
+				} else {
+					p.deductChips(playerBet);
+					pot += playerBet;
+					if (playerBet > currentBet) {
+						currentBet = playerBet;
+						bet(sortPlayersIntoBettingOrder(p));
+						break;
+					}
+				}
+			} else {
+				//Ensuring that the bet is valid is handled in determineAIBet method
+				int AIBet = determineAIBet(p);
+				if (AIBet == 0) {
+					p.fold();
+				} else if (AIBet < currentBet) {
+					p.fold();
+				} else {
+					p.deductChips(AIBet);
+					pot += AIBet;
+					if (AIBet > currentBet) {
+						currentBet = AIBet;
+						bet(sortPlayersIntoBettingOrder(p));
+						break;
+					}
 				}
 			}
-			if (i < players.length && i != 0) {
-				int aiBet = determineAIBet(players[i]); 
-				if (aiBet < currentBet) {
-					players[i].bet(0);
-					players[i].fold();
-				} else {
-					players[i].bet(aiBet);
-				}
-			} else if (i == 0) {
-				Game.getBetFromPlayer();
-			} else {					
-				i = 0;
-			}				
-		}			
+		}
 	}
-	
+
+
 	public void pickWinner() {
 		int firstNotFoldedPlayer = -1;
 		for (int i = 0; i < players.length; i++) {
@@ -301,21 +322,39 @@ public class FreeHoldEm {
 		int handVal = player.getHand().quickVal();
 		//Full house or better, bet big
 		if (handVal > 7) {
-			return 100;
+			if (currentBet < 100) {
+				return 100;
+			} else if (currentBet < 150) {
+				return currentBet;
+			} else {
+				return 0;
+			}
 		}
 		//Tree of a kind - Straight
 		else if (handVal > 3) {
-			return 65;
+			if (currentBet < 65) {
+				return 65;
+			} else if (currentBet < 100) {
+				return currentBet;
+			} else {
+				return 0;
+			}
 		}
 		//Two pair - Flush
 		else if (handVal > 1) {
-			return 30;
+			if (currentBet < 30) {
+				return 30;
+			} else if (currentBet < 45) {
+				return currentBet;
+			} else {
+				return 0;
+			}
 		}
-		else if (round != State.FIRST || round != State.FLOP) {
-			return 0;
+		else if (round == State.FIRST || round == State.FLOP) {
+			return 10;
 		}
 		else {
-			return 10;
+			return 0;
 		}
    	    	 
 	}
@@ -326,9 +365,14 @@ public class FreeHoldEm {
 	 * The player after the player that placed the big blind goes first and the big blind goes last.
 	 * @return a collection of players in the order they will bet.
 	 */
-	private Collection<Player> sortPlayersIntoBettingOrder() {
+	private Collection<Player> sortPlayersIntoInitialBettingOrder() {
 		LinkedList<Player> playersInOrder = new LinkedList<>();
-		int i = bigBlindPlayer + 1;
+		int i;
+		if (bigBlindPlayer < players.length - 1) {
+			i = bigBlindPlayer + 1;
+		} else {
+			i = 0;
+		}
 		while (playersInOrder.size() < players.length) {
 			if (!players[i].checkFold()) {
 				playersInOrder.add(players[i]);
@@ -337,6 +381,32 @@ public class FreeHoldEm {
 					i++;
 				} else {
 					i = 0;
+				}
+			}
+		}
+		return playersInOrder;
+	}
+
+	private Collection<Player> sortPlayersIntoBettingOrder(Player p) {
+		//determine which player this is
+		int indexOfPlayer = -1;
+		for (int i = 0; i < players.length; i++) {
+			if (players[i].equals(p)) {
+				if (i == players.length - 1) {
+					indexOfPlayer = 0;
+				} else {
+					indexOfPlayer = i + 1;
+				}
+			}
+		}
+		LinkedList<Player> playersInOrder = new LinkedList<>();
+		while (playersInOrder.size() < players.length) {
+			if (!players[indexOfPlayer].checkFold()) {
+				playersInOrder.add(players[indexOfPlayer]);
+				if (indexOfPlayer < players.length - 1) {
+					indexOfPlayer++;
+				} else {
+					indexOfPlayer = 0;
 				}
 			}
 		}

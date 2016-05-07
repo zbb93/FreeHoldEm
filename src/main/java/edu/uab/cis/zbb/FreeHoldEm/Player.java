@@ -129,6 +129,12 @@ public class Player {
         	return this.betThisRound;
         }
 
+	public void deductChips(int bet) {
+		chips -= bet;
+	}
+
+
+
         @Override
         /**
          * Converts player hand to a string value.

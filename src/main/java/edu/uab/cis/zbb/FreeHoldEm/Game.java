@@ -26,16 +26,12 @@ public class Game {
 		boolean playing = true;
 		while (playing) {
 			game.dealHands();
-			System.out.println(game.toString());
 			betLoop(game);
 			game.dealFlop();
-			System.out.println(game.toString());
 			betLoop(game);
 			game.dealTurn();
-			System.out.println(game.toString());
 			betLoop(game);
 			game.dealRiver();
-			System.out.println(game.toString());
 			betLoop(game);
 			game.pickWinner();
 			System.out.print("Would you like to play another hand? (y/n):");
@@ -65,10 +61,7 @@ public class Game {
 	 * @param game TODO: description
 	 */
 	private static void betLoop(FreeHoldEm game) {
-		game.bet();
-		if (!game.bettingComplete()) {
-			betLoop(game);
-		}
+		game.initialBet();
 	}
 	
 	/**
