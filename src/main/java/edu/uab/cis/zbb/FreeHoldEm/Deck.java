@@ -1,4 +1,4 @@
-package application;
+package edu.uab.cis.zbb.FreeHoldEm;
 /**
  * Represents traditional deck of 52 playing cards.
  */
@@ -9,6 +9,10 @@ public class Deck {
          * Deck is represented by an array of 52 cards.
          */
         private Card[] cards = new Card[52];
+        /**
+         * Integer value that represents the next card in the deck
+         */
+        private int index = 0;
 
         /**
          * Initializes card values and then shuffles the deck.
@@ -51,6 +55,22 @@ public class Deck {
                 return cards[index];
         }
 
+        /**
+         * Gets the card from the top of the deck. If the deck is empty then it is
+         * reshuffled and the index is reset to zero.
+         */
+        public Card getNextCard() {
+        	if (index < 52) {
+        		Card next = this.cards[index];
+        		index++;
+        		return next;
+        	} else {
+        		this.shuffle();
+        		index = 0;
+        		Card next = this.cards[index];
+        		return next;
+        	}
+        }
         @Override
         public String toString() {
                 String deckAsString = "";

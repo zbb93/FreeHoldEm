@@ -1,0 +1,118 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Card	Card.java	/^        public Card(String suit, int value) {$/;"	m	class:Card
+Card	Card.java	/^public class Card {$/;"	c
+Deck	Deck.java	/^        public Deck() {$/;"	m	class:Deck
+Deck	Deck.java	/^public class Deck {$/;"	c
+FreeHoldEm	FreeHoldEm.java	/^	public FreeHoldEm(int numPlayers) {$/;"	m	class:FreeHoldEm
+FreeHoldEm	FreeHoldEm.java	/^public class FreeHoldEm {$/;"	c
+Game	Game.java	/^public class Game {$/;"	c
+HIGHSCORE_DELIMITER	HighScore.java	/^	public final static String HIGHSCORE_DELIMITER = "\\t\\t\\t";$/;"	f	class:HighScore
+Hand	Hand.java	/^        Hand(Card[] hand) {$/;"	m	class:Hand
+Hand	Hand.java	/^public class Hand {$/;"	c
+HandEvaluator	HandEvaluator.java	/^	public HandEvaluator() {$/;"	m	class:HandEvaluator
+HandEvaluator	HandEvaluator.java	/^public class HandEvaluator {$/;"	c
+HighScore	HighScore.java	/^	public HighScore(String name, int score) {$/;"	m	class:HighScore
+HighScore	HighScore.java	/^public class HighScore {$/;"	c
+HighScoreFile	HighScoreFile.java	/^	public HighScoreFile(String path) {$/;"	m	class:HighScoreFile
+HighScoreFile	HighScoreFile.java	/^public class HighScoreFile {$/;"	c
+Player	Player.java	/^        public Player(String name) {$/;"	m	class:Player
+Player	Player.java	/^public class Player {$/;"	c
+Tuple	Tuple.java	/^    public Tuple(int x, int y) {$/;"	m	class:Tuple
+Tuple	Tuple.java	/^public class Tuple {$/;"	c
+addHighScore	HighScoreFile.java	/^	public void addHighScore(HighScore h) {$/;"	m	class:HighScoreFile
+application	Card.java	/^package application;$/;"	p
+application	Deck.java	/^package application;$/;"	p
+application	FreeHoldEm.java	/^package application;$/;"	p
+application	Game.java	/^package application;$/;"	p
+application	Hand.java	/^package application;$/;"	p
+application	HandEvaluator.java	/^package application;$/;"	p
+application	HighScore.java	/^package application;$/;"	p
+application	HighScoreFile.java	/^package application;$/;"	p
+application	Player.java	/^package application;$/;"	p
+application	Tuple.java	/^package application;$/;"	p
+assignHighScores	FreeHoldEm.java	/^	private void assignHighScores(HighScoreFile hf) {$/;"	m	class:FreeHoldEm	file:
+buildHand	HandEvaluator.java	/^  private void buildHand(Card[] hand, Player player) {$/;"	m	class:HandEvaluator	file:
+cards	Deck.java	/^        private Card[] cards = new Card[52];$/;"	f	class:Deck	file:
+cards	Hand.java	/^        private Card[] cards;$/;"	f	class:Hand	file:
+cardsOnTable	FreeHoldEm.java	/^	private Card[] cardsOnTable = new Card[5];$/;"	f	class:FreeHoldEm	file:
+checkFold	Player.java	/^        public boolean checkFold() {$/;"	m	class:Player
+chips	Player.java	/^        private int chips;$/;"	f	class:Player	file:
+compareTo	Hand.java	/^        public int compareTo(Hand that) {$/;"	m	class:Hand
+containsFlush	HandEvaluator.java	/^private String containsFlush(Card[] hand) {$/;"	m	class:HandEvaluator	file:
+containsFourOfAKind	HandEvaluator.java	/^private int containsFourOfAKind(Card[] hand) {$/;"	m	class:HandEvaluator	file:
+containsFullHouse	HandEvaluator.java	/^private Tuple containsFullHouse(Card[] hand) {$/;"	m	class:HandEvaluator	file:
+containsPair	HandEvaluator.java	/^private int containsPair(Card[] hand) {$/;"	m	class:HandEvaluator	file:
+containsStraight	HandEvaluator.java	/^private Tuple containsStraight(Card[] hand) {$/;"	m	class:HandEvaluator	file:
+containsStraightFlush	HandEvaluator.java	/^private Tuple containsStraightFlush(Card[] hand) {$/;"	m	class:HandEvaluator	file:
+containsThreeOfAKind	HandEvaluator.java	/^private int containsThreeOfAKind(Card[] hand) {$/;"	m	class:HandEvaluator	file:
+containsTwoPair	HandEvaluator.java	/^private Tuple containsTwoPair(Card[] hand) {$/;"	m	class:HandEvaluator	file:
+delete	HighScoreFile.java	/^	public void delete() {$/;"	m	class:HighScoreFile
+determineAIBet	FreeHoldEm.java	/^	private int determineAIBet(Player player) {$/;"	m	class:FreeHoldEm	file:
+endGame	FreeHoldEm.java	/^	private void endGame() {$/;"	m	class:FreeHoldEm	file:
+equals	Card.java	/^        public boolean equals(Object obj) {$/;"	m	class:Card
+exists	HighScoreFile.java	/^	public boolean exists() {$/;"	m	class:HighScoreFile
+finalHand	Player.java	/^        private Hand finalHand;$/;"	f	class:Player	file:
+findBestHand	HandEvaluator.java	/^  public void findBestHand(FreeHoldEm game, Player player) {$/;"	m	class:HandEvaluator
+fold	Player.java	/^        public void fold() {$/;"	m	class:Player
+getCard	Deck.java	/^        public Card getCard(int index) {$/;"	m	class:Deck
+getCards	Player.java	/^        public Card[] getCards() {$/;"	m	class:Player
+getCardsOnTable	FreeHoldEm.java	/^	public Card[] getCardsOnTable() {$/;"	m	class:FreeHoldEm
+getChips	Player.java	/^        public int getChips() {$/;"	m	class:Player
+getHand	Player.java	/^        public Hand getHand() {$/;"	m	class:Player
+getHighScoreByPlayer	HighScoreFile.java	/^	public String getHighScoreByPlayer(String name) {$/;"	m	class:HighScoreFile
+getHighScoreList	HighScoreFile.java	/^	public ArrayList<HighScore> getHighScoreList() {$/;"	m	class:HighScoreFile
+getName	HighScore.java	/^	public String getName() {$/;"	m	class:HighScore
+getName	Player.java	/^        public String getName() {$/;"	m	class:Player
+getScore	HighScore.java	/^	public int getScore() {$/;"	m	class:HighScore
+getSuit	Card.java	/^        public String getSuit() {$/;"	m	class:Card
+getValue	Card.java	/^        public int getValue() {$/;"	m	class:Card
+hand	Player.java	/^        private Card[] hand = new Card[2];$/;"	f	class:Player	file:
+he	FreeHoldEm.java	/^	private HandEvaluator he = new HandEvaluator();$/;"	f	class:FreeHoldEm	file:
+highScoreFile	FreeHoldEm.java	/^	private HighScoreFile highScoreFile;$/;"	f	class:FreeHoldEm	file:
+highScoreFile	HighScoreFile.java	/^	private File highScoreFile;$/;"	f	class:HighScoreFile	file:
+highScores	FreeHoldEm.java	/^	private HighScore[] highScores;$/;"	f	class:FreeHoldEm	file:
+highscores	HighScoreFile.java	/^	private ArrayList<HighScore> highscores = new ArrayList<HighScore>();$/;"	f	class:HighScoreFile	file:
+isFolded	Player.java	/^        private boolean isFolded;$/;"	f	class:Player	file:
+loadFile	HighScoreFile.java	/^	public void loadFile() {$/;"	m	class:HighScoreFile
+loadHighScores	HighScoreFile.java	/^	public ArrayList<HighScore> loadHighScores(Scanner scoreScanner) {$/;"	m	class:HighScoreFile
+main	Game.java	/^	public static void main(String[] args) {$/;"	m	class:Game
+name	HighScore.java	/^	private final String name;$/;"	f	class:HighScore	file:
+name	Player.java	/^        private String name;$/;"	f	class:Player	file:
+numberOfHighScores	HighScoreFile.java	/^	public int numberOfHighScores() {$/;"	m	class:HighScoreFile
+path	HighScoreFile.java	/^	private String path = "";$/;"	f	class:HighScoreFile	file:
+play	FreeHoldEm.java	/^	private void play() {$/;"	m	class:FreeHoldEm	file:
+players	FreeHoldEm.java	/^	private Player[] players;$/;"	f	class:FreeHoldEm	file:
+pot	FreeHoldEm.java	/^	private int pot = 0;$/;"	f	class:FreeHoldEm	file:
+quickVal	Hand.java	/^        public int quickVal() {$/;"	m	class:Hand
+round	FreeHoldEm.java	/^	private int round = 1;$/;"	f	class:FreeHoldEm	file:
+sc	FreeHoldEm.java	/^	private static Scanner sc = new Scanner(System.in);$/;"	f	class:FreeHoldEm	file:
+score	HighScore.java	/^	private final int score;$/;"	f	class:HighScore	file:
+setCards	Player.java	/^        public void setCards(int index, Card card) {$/;"	m	class:Player
+setChips	Player.java	/^        public void setChips(int newVal) {$/;"	m	class:Player
+setHand	Player.java	/^        public void setHand(Hand hand) {$/;"	m	class:Player
+shuffle	Deck.java	/^        private void shuffle() {$/;"	m	class:Deck	file:
+sortHand	HandEvaluator.java	/^  private Card[] sortHand(Card[] hand) {$/;"	m	class:HandEvaluator	file:
+sortHighScores	HighScoreFile.java	/^	public void sortHighScores() {$/;"	m	class:HighScoreFile
+startNewGame	FreeHoldEm.java	/^	private void startNewGame() {$/;"	m	class:FreeHoldEm	file:
+suit	Card.java	/^        private String suit;$/;"	f	class:Card	file:
+takeBets	FreeHoldEm.java	/^	private void takeBets() {$/;"	m	class:FreeHoldEm	file:
+toString	Card.java	/^        public String toString() {$/;"	m	class:Card
+toString	Deck.java	/^        public String toString() {$/;"	m	class:Deck
+toString	Hand.java	/^        public String toString() {$/;"	m	class:Hand
+toString	HighScore.java	/^	public String toString() {$/;"	m	class:HighScore
+toString	HighScoreFile.java	/^	public String toString() {$/;"	m	class:HighScoreFile
+toString	Player.java	/^        public String toString() {$/;"	m	class:Player
+unFold	Player.java	/^        public void unFold() {$/;"	m	class:Player
+value	Card.java	/^        private int value;$/;"	f	class:Card	file:
+value	Hand.java	/^        private int[] value;$/;"	f	class:Hand	file:
+valueOf	Hand.java	/^        private String valueOf(int faceValue) {$/;"	m	class:Hand	file:
+writeDummyHighScoresIfNecessary	HighScoreFile.java	/^	public void writeDummyHighScoresIfNecessary() {$/;"	m	class:HighScoreFile
+writeNewScore	FreeHoldEm.java	/^	private void writeNewScore() {$/;"	m	class:FreeHoldEm	file:
+writePlayersIntoFile	HighScoreFile.java	/^	public void writePlayersIntoFile() {$/;"	m	class:HighScoreFile
+x	Tuple.java	/^    public int x;$/;"	f	class:Tuple
+y	Tuple.java	/^    public int y;$/;"	f	class:Tuple

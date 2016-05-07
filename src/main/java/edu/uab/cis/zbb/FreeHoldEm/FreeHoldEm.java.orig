@@ -19,6 +19,7 @@ package application;
 import java.io.IOException;
 import java.util.ArrayList;
 /*
+ * TODO: Fix betting rules
  * TODO: Test ace low implementation	  
  * TODO: Create window containing background image (poker table)
  * TODO: Use player personality to randomize computer controlled 
@@ -61,6 +62,14 @@ public class FreeHoldEm {
 	/**
 	 * Array to store the current high scores. It is initialized in assignHighScores function.
 	 */
+<<<<<<< HEAD:src/FreeHoldEm.java
+	private static HighScore[] highScores = new HighScore[10];
+	/**
+	 * Integer value used to represent the current bid.
+	 */      
+        private static int currentBet = 0;
+
+=======
 	private static HighScore[] highScores;
     /**
      * Handles highScore file I/O.   
@@ -68,6 +77,7 @@ public class FreeHoldEm {
 	private static HighScoreFile highScoreFile;
 	
 	
+>>>>>>> master:src/application/FreeHoldEm.java
 	public static void main(String[] args) throws IOException {
 		//Creates a new file or loads a existing file. 
 		highScoreFile = new HighScoreFile("high_scores.dat");
@@ -110,20 +120,22 @@ public class FreeHoldEm {
 		//Deal player hands
 		for (int i = 0; i < players.length; i++) {
 			if (players[i].checkFold()) {
-				System.out.printf("%s is out of chips!", players[i].getName());
+				System.out.printf("%s is out of chips!\n", players[i].getName());
 			}
 			else {
 				players[i].setCards(0, deck.getCard(j));
 				players[i].setCards(1, deck.getCard(j + 1));
-				j = j + 2; 
+				j = j + 2;
 				if (i == 0) {
 					System.out.println("Your hand: " +
 							players[i].toString()); 
 				} 
+			       /* 
+				* Uncomment this section to see values of CPU hands while playing.	
 				else {
 					System.out.println(players[i].getName() +
 							": " + players[i].toString()); 
-				}      
+				}*/      
 			}
 		}
 		Card[] yourHand = players[0].getCards();
@@ -182,18 +194,21 @@ public class FreeHoldEm {
 			System.out.println("Everyone folded!");
 			startNewGame();
 		}
-		Player winner = players[firstNotFoldedPlayer];
-		for (int i = firstNotFoldedPlayer + 1; i < players.length; i++) {
-			if (players[i].checkFold()) {
-				continue;
+		else {
+			Player winner = players[firstNotFoldedPlayer];
+			for (int i = firstNotFoldedPlayer + 1; 
+					i < players.length; i++) {
+				if (players[i].checkFold()) {
+					continue;
+				}
+				if (winner.getHand().compareTo(players[i]
+							.getHand()) == -1) {
+					winner = players[i];
+				}
 			}
-			if (winner.getHand().compareTo(players[i].getHand()) == -1) {
-				winner = players[i];
-			}
+			winner.setChips(winner.getChips() + pot);
+			System.out.printf("\n%s wins with a \n%s\nWinnings: %d\n", winner.getName(), winner.getHand().toString(), pot);
 		}
-		winner.setChips(winner.getChips() + pot);
-		System.out.printf("\n%s wins with a \n%s\nWinnings: %d\n", winner.getName(),
-				winner.getHand().toString(), pot);
 		startNewGame();
 	}
     /**
@@ -308,9 +323,7 @@ public class FreeHoldEm {
 		//normal straight
 		if (indices.x == 1) {
 			Card[] hand = new Card[5];
-			for (int i = 0; i < hand.length; i++) {
-				System.out.printf("Player: %s", player.getName());
-				System.out.printf("Tuple: %d %d\n", indices.x, indices.y);
+			for (int i = 0; i < hand.length; i++) {	
 				hand[i] = sortedCards[indices.y - i];
 			}
 			buildHand(hand, player);
@@ -461,13 +474,21 @@ public class FreeHoldEm {
 	private static void takeBets() {
 		
 		if ((!(players[0].checkFold())) && players[0].getChips() > 0) {
+			//System.out.printf("Current Bet: %d\n", currentBet);
 			System.out.println("Your chips: " + players[0].getChips());
 			System.out.print("Place your bet (0 to fold): ");
 			int playerBet = sc.nextInt();
 			if (playerBet > 0) {
 				pot += playerBet;
 				players[0].setChips(players[0].getChips() - playerBet);
+				currentBet = playerBet;
 			}
+			/*
+			else if (playerBet > 0 && playerBet < currentBet) {
+				System.out.printf("You must bet at least the current bet!\n");
+				takeBets();
+				return;
+			}*/
 			else {
 				players[0].fold();
 			}
@@ -484,6 +505,8 @@ public class FreeHoldEm {
 				}
 				pot += bet;
 				players[i].setChips(players[i].getChips() - bet);
+				System.out.printf("%s bet %d chips.\n", 
+						players[i].getName(), bet);
 			}
 		}
 	}
@@ -496,6 +519,85 @@ public class FreeHoldEm {
 	private static int determineAIBet(Player player) {
 		findBestHand(player);
 		int handVal = player.getHand().quickVal();
+		//Determine number of players in hand for accurate stats
+		int numPlayers = 0;
+		for (int i = 0; i < players.length; i++) {
+			if (!(players[i].checkFold()))
+				numPlayers++;
+		}
+		if (round == 1) {
+			Card[] inHand = player.getCards();
+			/*
+			 * Determine chance of pocket pair getting beaten by
+			 * bigger pair
+			 */
+			if (handVal == 2) {
+				int biggerPairProb = ((84 - 6 * inHand[0].getValue())/1225) * numPlayers;
+				return (20 - 20 * biggerPairProb);
+			}
+			/*
+			 * If both cards in hand are same suit 60% chance on
+			 * the flop of having four cards of the same suit.
+			 * Worth a bet?
+			 */
+			if (inHand[0].getSuit().equals(inHand[1].getSuit())) {
+				return 10;
+			}
+			//No point in folding yet!
+			else {
+				return 5;
+			}
+		}
+		/*
+		 * Betting logic for the flop goes here.
+		 * Thinking mostly calculating outs from here on. Possibly determine overcard
+		 * value for pairs, or three/four of a kind?
+		 */
+		if (round == 2) {
+			Card[] hand = player.getHand().getCards();
+			//Flush on flop
+			if (handVal == 6) {
+				//Flush with an ace
+				if (hand[0].getValue() == 14) {
+					return 40;
+				}
+				return 30;
+			}
+			//Still a little early to fold
+			else {
+				return 5;
+			}
+		}
+		/*
+		 * Betting logic for the turn goes here.
+		 * Again mostly calculating outs, may determine overcard value for pairs,
+		 * three of a kind, four of a kind.
+		 */
+		if (round == 3) {
+
+		}
+		/*
+		 * Betting logic for the river goes here. Currently here I have just copied
+		 * the rudimentary betting logic previously used. This logic determines
+		 * the bet solely based on the CPUs hand.
+		 */
+		if (round == 4) {
+			//Full house or better, bet big
+			if (handVal > 7) {
+				return 100;
+			}
+			//Tree of a kind - Straight
+			else if (handVal > 3) {
+				return 65;
+			}
+			//Two pair - Flush
+			else if (handVal > 1) {
+				return 30;
+			}
+			else if (round > 2){
+				return 0;
+			}
+		}
 		//Full house or better, bet big
 		if (handVal > 7) {
 			return 100;

@@ -1,4 +1,4 @@
-package unitTests;
+package edu.uab.cis.zbb.FreeHoldEm;
 
 import static org.junit.Assert.*;
 
@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import application.HighScore;
-import application.HighScoreFile;
+/*
+import edu.uab.cis.zbb.FreeHoldEm.HighScore;
+import edu.uab.cis.zbb.FreeHoldEm.HighScoreFile;*/
 //An example of testing.
-public class TestHighScoreFile {
+public class HighScoreFileTest {
 	
 	private HighScoreFile file;
 	@Before
@@ -47,7 +47,7 @@ public class TestHighScoreFile {
 		file.addHighScore(new HighScore("Mark", 555));
 		file.writePlayersIntoFile();
 		file.loadFile();
-		assertEquals("Mark" + HighScore.HIGHSCORE_DELIMITER + "555", file.getHighScoreByPlayer("Mark"));
+		assertEquals("Mark" + HighScore.HIGHSCORE_DELIMITER + "555\n", file.getHighScoreByPlayer("Mark"));
 	}
 	
 	@After

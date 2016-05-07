@@ -1,9 +1,9 @@
-package application;
+package edu.uab.cis.zbb.FreeHoldEm;
 //So we can sort them in arrayList
 public class HighScore {
 	private final String name;
 	private final int score;
-	public final static String HIGHSCORE_DELIMITER = "     ";
+	public final static String HIGHSCORE_DELIMITER = "\t\t\t";
 	
 	public HighScore(String name, int score) {
 		this.name = name;
@@ -29,6 +29,7 @@ public class HighScore {
 		asString += name;
 		asString += HIGHSCORE_DELIMITER;
 		asString += Integer.toString(score);
+		asString += "\n";
 		return asString;
 	}
 
