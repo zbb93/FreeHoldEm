@@ -15,9 +15,6 @@ package edu.uab.cis.zbb.FreeHoldEm;
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-       
-import java.io.IOException;
-import java.util.ArrayList;
 /*
  * TODO: Test ace low implementation	  
  * TODO: Create window containing background image (poker table)
@@ -35,7 +32,7 @@ import java.util.Scanner;
  * @author Zachary Bowen
  */
 public class FreeHoldEm {
-	enum State {
+	private enum State {
 		FIRST, FLOP, TURN, RIVER
 	}
     /**
@@ -86,7 +83,7 @@ public class FreeHoldEm {
 		this.cardsOnTable = cards;
 	}
 	
-	public FreeHoldEm(int numPlayers) {
+	FreeHoldEm(int numPlayers) {
 		players = new Player[numPlayers];
 		players[0] = new Player("human");
 		for (int i = 1; i < players.length; i++) {
@@ -100,7 +97,7 @@ public class FreeHoldEm {
 		//play();
 	}
 	
-	public void dealHands() {
+	void dealHands() {
 		for (int i = 0; i < players.length; i++) {
 			if (players[i].checkFold()) {
 				System.out.printf("%s is out of chips!", players[i].getName());
@@ -120,10 +117,10 @@ public class FreeHoldEm {
 		}
 	}
 	
-	public void dealFlop() {
+	void dealFlop() {
 		round = State.FLOP;
 		cardsOnTable[0] = deck.getNextCard(); 
-		cardsOnTable[1] = deck.getNextCard(); 
+		cardsOnTable[1] = deck.getNextCard();
 		cardsOnTable[2] = deck.getNextCard();
 		Card[] yourHand = players[0].getCards();
 		System.out.printf("Your Cards: %s, %s\n", yourHand[0].toString(), 
@@ -133,7 +130,7 @@ public class FreeHoldEm {
 		System.out.println("Cash in pot: " + pot);
 	}
 	
-	public void dealTurn() {
+	void dealTurn() {
 		round = State.TURN;
 		cardsOnTable[3] = deck.getNextCard();
 		Card[] yourHand = players[0].getCards();
@@ -143,7 +140,7 @@ public class FreeHoldEm {
 		System.out.println("Cash in pot: " + pot);
 	}
 	
-	public void dealRiver() {
+	void dealRiver() {
 		round = State.RIVER;
 		Card[] yourHand = players[0].getCards();
 		cardsOnTable[4] = deck.getNextCard();
@@ -160,7 +157,7 @@ public class FreeHoldEm {
 	 * Betting continues and the remaining players must match the new bet.
 	 *
 	 */
-	public void initialBet() {
+	void initialBet() {
 		//Create a collection of players that represents the betting order.
 		Collection<Player> playersInOrder = sortPlayersIntoInitialBettingOrder();
 		players[smallBlindPlayer].deductChips(LITTLE_BLIND);
@@ -201,7 +198,7 @@ public class FreeHoldEm {
 		}
 	}
 
-	public void bet(Collection<Player> playersInOrder) {
+	private void bet(Collection<Player> playersInOrder) {
 		//Create a collection of players that represents the betting order.
 		for (Player p : playersInOrder) {
 			//TODO: Ensure player bet is valid
@@ -239,7 +236,7 @@ public class FreeHoldEm {
 	}
 
 
-	public void pickWinner() {
+	void pickWinner() {
 		int firstNotFoldedPlayer = -1;
 		for (int i = 0; i < players.length; i++) {
 			if (!(players[i].checkFold())) {
@@ -264,50 +261,16 @@ public class FreeHoldEm {
 				winner.getHand().toString(), pot);
 	}
 	
-	public void newHand() {
+	void newHand() {
 		pot = 0;
 		bigBlindPlayer++;
 		smallBlindPlayer++;
-		for (int i = 0; i < players.length; i++) {
-			if (players[i].getChips() > 0) {
-				players[i].unFold();
+		for (Player player : players) {
+			if (player.getChips() > 0) {
+				player.unFold();
 			}
 			else {
-				players[i].fold();
-			}
-		}
-	}
-	/**
-	 * Prompts user for input and places user bet. Once the AI bets are determined
-	 * with determineAIBet they are placed as well. If a player or CPU bets 0 chips
-	 * this is considered folding.
-	 */
-	private void takeBets() {
-		
-		if ((!(players[0].checkFold())) && players[0].getChips() > 0) {
-			System.out.println("Your chips: " + players[0].getChips());
-			System.out.print("Place your bet (0 to fold): ");
-			int playerBet = sc.nextInt();
-			if (playerBet > 0) {
-				pot += playerBet;
-				players[0].setChips(players[0].getChips() - playerBet);
-			}
-			else {
-				players[0].fold();
-			}
-		}
-		else if (players[0].getChips() <= 0) {
-			System.out.println("You are out of chips!");
-		}
-		for (int i = 1; i < players.length; i++) {
-			if ((!(players[i].checkFold())) && players[i].getChips() > 0) {
-				int bet = determineAIBet(players[i]);
-				if (bet == 0) {
-					System.out.println(players[i].getName() +"Folded!");
-					players[i].fold();
-				}
-				pot += bet;
-				players[i].setChips(players[i].getChips() - bet);
+				player.fold();
 			}
 		}
 	}
@@ -414,17 +377,11 @@ public class FreeHoldEm {
 	}
 
 	
-	public Card[] getCardsOnTable() {
+	Card[] getCardsOnTable() {
 	  return this.cardsOnTable;
 	}
 	
-	public int getPlayerScore() {
+	int getPlayerScore() {
 		return players[0].getChips();
 	}
-	
-	public boolean bettingComplete() {
-		return true;
-	}
-	
-
 }
