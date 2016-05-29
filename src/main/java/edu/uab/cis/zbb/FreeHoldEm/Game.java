@@ -20,20 +20,27 @@ public class Game {
 		//Creates dummy highscores if there are no previous highscores.
 		highScoreFile.writeDummyHighScoresIfNecessary();
 		assignHighScores(highScoreFile);
+		System.out.print("Enter your name: ");
+		String playerName = sc.next();
 		System.out.print("Number of players (2 - 8): ");
 		int numberPlayers = sc.nextInt();                
-		FreeHoldEm game = new FreeHoldEm(numberPlayers);
+		FreeHoldEm game = new FreeHoldEm(numberPlayers, playerName);
 		boolean playing = true;
 		while (playing) {
 			game.dealHands();
+			System.out.println(game.toString());
 			betLoop(game);
 			game.dealFlop();
+			System.out.println(game.toString());
 			betLoop(game);
 			game.dealTurn();
+			System.out.println(game.toString());
 			betLoop(game);
 			game.dealRiver();
+			System.out.println(game.toString());
 			betLoop(game);
 			game.pickWinner();
+			System.out.println(game.toString());
 			System.out.print("Would you like to play another hand? (y/n):");
 			String response = sc.next();
 			if (response.equals("n")) {

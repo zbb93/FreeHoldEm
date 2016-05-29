@@ -33,7 +33,7 @@ import java.util.Scanner;
  */
 public class FreeHoldEm {
 	private enum State {
-		FIRST, FLOP, TURN, RIVER
+		INIT, FIRST, FLOP, TURN, RIVER, CLEAN_UP
 	}
     /**
      * Array of players. As players run out of chips they are not removed from the
@@ -56,12 +56,7 @@ public class FreeHoldEm {
 	 * this hand.
 	 */
 	private int pot = 0;
-	/**
-	 * Scanner used to get input from user.
-	 */
-	private static Scanner sc = new Scanner(System.in);
 
-	
 	private HandEvaluator he = new HandEvaluator();
 	
 	private Deck deck = new Deck();
@@ -82,37 +77,25 @@ public class FreeHoldEm {
 	public FreeHoldEm(Card[] cards) {
 		this.cardsOnTable = cards;
 	}
-	
-	FreeHoldEm(int numPlayers) {
+
+	FreeHoldEm(int numPlayers, String playerName) {
 		players = new Player[numPlayers];
-		players[0] = new Player("human");
+		players[0] = new Player(playerName, true);
 		for (int i = 1; i < players.length; i++) {
 			players[i] = new Player("CPU" +
-					String.valueOf(i));
+				String.valueOf(i));
 		}
 		blinds = new boolean[players.length];
 		blinds[0] = true;
 		blinds[1] = true;
-		round = State.FIRST;
-		//play();
+		round = State.INIT;
 	}
 	
 	void dealHands() {
-		for (int i = 0; i < players.length; i++) {
-			if (players[i].checkFold()) {
-				System.out.printf("%s is out of chips!", players[i].getName());
-			}
-			else {
-				players[i].setCards(0, deck.getNextCard());
-				players[i].setCards(1, deck.getNextCard());
-				if (i == 0) {
-					System.out.println("Your hand: " +
-							players[i].toString()); 
-				} 
-				else {
-					System.out.println(players[i].getName() +
-							": " + players[i].toString()); 
-				}      
+		for (Player player : players) {
+			if (!player.checkFold()) {
+				player.setCards(0, deck.getNextCard());
+				player.setCards(1, deck.getNextCard());
 			}
 		}
 	}
@@ -122,32 +105,16 @@ public class FreeHoldEm {
 		cardsOnTable[0] = deck.getNextCard(); 
 		cardsOnTable[1] = deck.getNextCard();
 		cardsOnTable[2] = deck.getNextCard();
-		Card[] yourHand = players[0].getCards();
-		System.out.printf("Your Cards: %s, %s\n", yourHand[0].toString(), 
-				yourHand[1].toString());
-		System.out.printf("Flop: %s, %s, %s\n", cardsOnTable[0], 
-				cardsOnTable[1], cardsOnTable[2]);
-		System.out.println("Cash in pot: " + pot);
 	}
 	
 	void dealTurn() {
 		round = State.TURN;
 		cardsOnTable[3] = deck.getNextCard();
-		Card[] yourHand = players[0].getCards();
-		System.out.printf("Your Cards: %s, %s\n", yourHand[0].toString(), yourHand[1].toString());
-		System.out.printf("Turn: %s, %s, %s, %s\n", cardsOnTable[0], cardsOnTable[1], 
-				cardsOnTable[2], cardsOnTable[3]);
-		System.out.println("Cash in pot: " + pot);
 	}
 	
 	void dealRiver() {
 		round = State.RIVER;
-		Card[] yourHand = players[0].getCards();
 		cardsOnTable[4] = deck.getNextCard();
-		System.out.printf("Your Cards: %s, %s\n", yourHand[0].toString(), yourHand[1].toString());
-		System.out.printf("River: %s, %s, %s, %s, %s\n", cardsOnTable[0], cardsOnTable[1], 
-				cardsOnTable[2], cardsOnTable[3], cardsOnTable[4]);
-		System.out.println("Cash in pot: " + pot);
 	}
 
 	/**
@@ -163,9 +130,10 @@ public class FreeHoldEm {
 		players[smallBlindPlayer].deductChips(LITTLE_BLIND);
 		players[bigBlindPlayer].deductChips(BIG_BLIND);
 		currentBet = BIG_BLIND;
+		pot += BIG_BLIND + LITTLE_BLIND;
 		for (Player p : playersInOrder) {
 			//TODO: Ensure player bet is valid
-			if (p.getName().equals("human")) {
+			if (p.isHuman()) {
 				int playerBet = Game.getBetFromPlayer();
 				if (playerBet == 0) {
 					p.fold();
@@ -202,7 +170,7 @@ public class FreeHoldEm {
 		//Create a collection of players that represents the betting order.
 		for (Player p : playersInOrder) {
 			//TODO: Ensure player bet is valid
-			if (p.getName().equals("human")) {
+			if (p.isHuman()) {
 				int playerBet = Game.getBetFromPlayer();
 				if (playerBet == 0) {
 					p.fold();
@@ -237,6 +205,7 @@ public class FreeHoldEm {
 
 
 	void pickWinner() {
+		round = State.CLEAN_UP;
 		int firstNotFoldedPlayer = -1;
 		for (int i = 0; i < players.length; i++) {
 			if (!(players[i].checkFold())) {
@@ -313,7 +282,7 @@ public class FreeHoldEm {
 				return 0;
 			}
 		}
-		else if (round == State.FIRST || round == State.FLOP) {
+		else if (round == State.INIT || round == State.FLOP) {
 			return 10;
 		}
 		else {
@@ -339,7 +308,6 @@ public class FreeHoldEm {
 		while (playersInOrder.size() < players.length) {
 			if (!players[i].checkFold()) {
 				playersInOrder.add(players[i]);
-				//TODO: Maybe shouldn't be -1?
 				if (i < players.length - 1) {
 					i++;
 				} else {
@@ -360,6 +328,7 @@ public class FreeHoldEm {
 				} else {
 					indexOfPlayer = i + 1;
 				}
+				break;
 			}
 		}
 		LinkedList<Player> playersInOrder = new LinkedList<>();
@@ -383,5 +352,57 @@ public class FreeHoldEm {
 	
 	int getPlayerScore() {
 		return players[0].getChips();
+	}
+
+	@Override
+	public String toString() {
+		String gameAsString = "";
+		switch(round) {
+			case INIT:
+				//TODO: add some type of flag so that computer hands aren't printed unless debug mode
+				gameAsString += playerHandsAsStrings();
+				break;
+			case FLOP:
+				gameAsString += "Flop: " + cardsOnTable[0].toString() + " " +
+					cardsOnTable[1].toString() + cardsOnTable[2].toString() + "\n";
+				gameAsString += playerHandsAsStrings();
+				gameAsString += "Cash in pot: " + pot + "\n";
+				break;
+			case TURN:
+				gameAsString += "Turn: " + cardsOnTable[0].toString() + " " +
+					cardsOnTable[1].toString() + cardsOnTable[2].toString() +
+					cardsOnTable[3].toString() + "\n";
+				gameAsString += playerHandsAsStrings();
+				gameAsString += "Cash in pot: " + pot + "\n";
+				break;
+			case RIVER:
+				gameAsString += "River: " + cardsOnTable[0].toString() + " " +
+					cardsOnTable[1].toString() + cardsOnTable[2].toString() +
+					cardsOnTable[3].toString() + cardsOnTable[4] + "\n";
+				gameAsString += playerHandsAsStrings();
+				gameAsString += "Cash in pot: " + pot + "\n";
+				break;
+			case CLEAN_UP:
+				//TODO: move output from pickWinner method here.
+		}
+		return gameAsString;
+	}
+
+	private String playerHandsAsStrings() {
+		String handsAsString = "";
+		for (Player player : players) {
+			if (player.isHuman()) {
+				handsAsString += "Your Cards: ";
+				Card[] cards = player.getCards();
+				handsAsString += cards[0].toString() + " ";
+				handsAsString += cards[1].toString() + "\n";
+			} else {
+				handsAsString += player.getName() + "'s Cards: ";
+				Card[] cards = player.getCards();
+				handsAsString += cards[0].toString() + " ";
+				handsAsString += cards[1].toString() + "\n";
+			}
+		}
+		return handsAsString;
 	}
 }
