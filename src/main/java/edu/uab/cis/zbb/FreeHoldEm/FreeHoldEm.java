@@ -207,6 +207,8 @@ public class FreeHoldEm {
 	void pickWinner() {
 		round = State.CLEAN_UP;
 		int firstNotFoldedPlayer = -1;
+		//Initialize final hand for human player. AI players have their final hand set when placing their bet.
+		he.findBestHand(this, players[0]);
 		for (int i = 0; i < players.length; i++) {
 			if (!(players[i].checkFold())) {
 				firstNotFoldedPlayer = i;
@@ -218,10 +220,7 @@ public class FreeHoldEm {
 		}
 		Player winner = players[firstNotFoldedPlayer];
 		for (int i = firstNotFoldedPlayer + 1; i < players.length; i++) {
-			if (players[i].checkFold()) {
-				continue;
-			}
-			if (winner.getHand().compareTo(players[i].getHand()) == -1) {
+			if (players[i].checkFold()&& winner.getHand().compareTo(players[i].getHand()) == -1) {
 				winner = players[i];
 			}
 		}
@@ -305,42 +304,53 @@ public class FreeHoldEm {
 		} else {
 			i = 0;
 		}
-		while (playersInOrder.size() < players.length) {
+		boolean looped = false;
+		while (playersInOrder.size() < players.length && (!looped || i <= bigBlindPlayer)) {
 			if (!players[i].checkFold()) {
 				playersInOrder.add(players[i]);
-				if (i < players.length - 1) {
-					i++;
-				} else {
-					i = 0;
-				}
 			}
+			if (i < players.length - 1) {
+				i++;
+			} else {
+				i = 0;
+				looped = true;
+			}
+
 		}
 		return playersInOrder;
 	}
 
 	private Collection<Player> sortPlayersIntoBettingOrder(Player p) {
 		//determine which player this is
-		int indexOfPlayer = -1;
+		int indexOfPlayerThatRaised = -1;
+		int indexOfPlayerToAdd = -1;
 		for (int i = 0; i < players.length; i++) {
 			if (players[i].equals(p)) {
 				if (i == players.length - 1) {
-					indexOfPlayer = 0;
+					indexOfPlayerThatRaised = i;
+					indexOfPlayerToAdd = 0;
 				} else {
-					indexOfPlayer = i + 1;
+					indexOfPlayerThatRaised = i;
+					indexOfPlayerToAdd = i + 1;
 				}
 				break;
 			}
 		}
 		LinkedList<Player> playersInOrder = new LinkedList<>();
-		while (playersInOrder.size() < players.length) {
-			if (!players[indexOfPlayer].checkFold()) {
-				playersInOrder.add(players[indexOfPlayer]);
-				if (indexOfPlayer < players.length - 1) {
-					indexOfPlayer++;
-				} else {
-					indexOfPlayer = 0;
-				}
+		//The player that made the raise will not get to bet again.
+		while (playersInOrder.size() < players.length - 1) {
+			if (indexOfPlayerToAdd == indexOfPlayerThatRaised) {
+				break;
 			}
+			if (!players[indexOfPlayerToAdd].checkFold()) {
+				playersInOrder.add(players[indexOfPlayerToAdd]);
+			}
+			if (indexOfPlayerToAdd < players.length - 1) {
+				indexOfPlayerToAdd++;
+			} else {
+				indexOfPlayerToAdd = 0;
+			}
+
 		}
 		return playersInOrder;
 	}
@@ -356,6 +366,7 @@ public class FreeHoldEm {
 
 	@Override
 	public String toString() {
+		//TODO: Display blinds and currentBet for all states except CLEAN_UP
 		String gameAsString = "";
 		switch(round) {
 			case INIT:
@@ -364,22 +375,25 @@ public class FreeHoldEm {
 				break;
 			case FLOP:
 				gameAsString += "Flop: " + cardsOnTable[0].toString() + " " +
-					cardsOnTable[1].toString() + cardsOnTable[2].toString() + "\n";
+					cardsOnTable[1].toString() + " " + cardsOnTable[2].toString() + "\n";
 				gameAsString += playerHandsAsStrings();
+				gameAsString += "Current Bet: " + currentBet + "\n";
 				gameAsString += "Cash in pot: " + pot + "\n";
 				break;
 			case TURN:
 				gameAsString += "Turn: " + cardsOnTable[0].toString() + " " +
-					cardsOnTable[1].toString() + cardsOnTable[2].toString() +
+					cardsOnTable[1].toString() + " " + cardsOnTable[2].toString() + " " +
 					cardsOnTable[3].toString() + "\n";
 				gameAsString += playerHandsAsStrings();
+				gameAsString += "Current Bet: " + currentBet + "\n";
 				gameAsString += "Cash in pot: " + pot + "\n";
 				break;
 			case RIVER:
 				gameAsString += "River: " + cardsOnTable[0].toString() + " " +
-					cardsOnTable[1].toString() + cardsOnTable[2].toString() +
-					cardsOnTable[3].toString() + cardsOnTable[4] + "\n";
+					cardsOnTable[1].toString() + " " + cardsOnTable[2].toString() + " " +
+					cardsOnTable[3].toString() + " " + cardsOnTable[4] + "\n";
 				gameAsString += playerHandsAsStrings();
+				gameAsString += "Current Bet: " + currentBet + "\n";
 				gameAsString += "Cash in pot: " + pot + "\n";
 				break;
 			case CLEAN_UP:
