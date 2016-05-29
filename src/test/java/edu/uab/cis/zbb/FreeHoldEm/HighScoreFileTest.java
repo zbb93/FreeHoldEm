@@ -34,7 +34,7 @@ public class HighScoreFileTest {
 		file.addHighScore(h3);
 		file.sortHighScores();
 		
-		ArrayList<HighScore> excpectedList = new ArrayList<HighScore>();
+		ArrayList<HighScore> excpectedList = new ArrayList<>();
 		excpectedList.add(h2);
 		excpectedList.add(h);
 		excpectedList.add(h3);
@@ -47,7 +47,7 @@ public class HighScoreFileTest {
 		file.addHighScore(new HighScore("Mark", 555));
 		file.writePlayersIntoFile();
 		file.loadFile();
-		assertEquals("Mark" + HighScore.HIGHSCORE_DELIMITER + "555\n", file.getHighScoreByPlayer("Mark"));
+		assertEquals("Mark" + HighScore.getHighScoreDelimiter() + "555\n", file.getHighScoreByPlayer("Mark"));
 	}
 	
 	@After

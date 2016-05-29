@@ -20,9 +20,11 @@ public class Game {
 		//Creates dummy highscores if there are no previous highscores.
 		highScoreFile.writeDummyHighScoresIfNecessary();
 		assignHighScores(highScoreFile);
+		System.out.print("Enter your name: ");
+		String playerName = sc.next();
 		System.out.print("Number of players (2 - 8): ");
 		int numberPlayers = sc.nextInt();                
-		FreeHoldEm game = new FreeHoldEm(numberPlayers);
+		FreeHoldEm game = new FreeHoldEm(numberPlayers, playerName);
 		boolean playing = true;
 		while (playing) {
 			game.dealHands();
@@ -38,6 +40,7 @@ public class Game {
 			System.out.println(game.toString());
 			betLoop(game);
 			game.pickWinner();
+			System.out.println(game.toString());
 			System.out.print("Would you like to play another hand? (y/n):");
 			String response = sc.next();
 			if (response.equals("n")) {
@@ -51,15 +54,21 @@ public class Game {
 		}
 		
 	}
+
+	static int getBetFromPlayer() {
+		System.out.print("Enter your bet: ");
+		return sc.nextInt();
+	}
+
+	/**
+	 * Betting begins with player after the big blind.
+	 * If a bet has been made already the player can match the bet or raise
+	 * If a player raises the minimum raise becomes their raise and all future raises must be at least this size.
+	 * Betting continues and the remaining players must match the new bet.
+	 * @param game TODO: description
+	 */
 	private static void betLoop(FreeHoldEm game) {
-		System.out.print("Enter your bet:");
-		int playerBet = sc.nextInt();
-		game.bet(playerBet);
-		if (game.bettingComplete()) {
-			return;
-		} else {
-			betLoop(game);
-		}
+		game.initialBet();
 	}
 	
 	/**
