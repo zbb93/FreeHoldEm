@@ -2,7 +2,6 @@ package org.github.zbb93.FreeHoldEm;
 
 import com.google.common.collect.Lists;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /*
@@ -17,7 +16,8 @@ public class HandEvaluator {
 
   public void findBestHand(FreeHoldEm game, Player player) {
 	  Card[] cards = new Card[7];
-	  Card[] cardsOnTable = game.getCardsOnTable();
+	  List<Card> cardList = game.getCardsOnTable();
+	  Card[] cardsOnTable = cardList.toArray(new Card[0]);
 	  Card[] playerCards = player.getCards();
 	  cards[0] = playerCards[0];
 	  cards[1] = playerCards[1];

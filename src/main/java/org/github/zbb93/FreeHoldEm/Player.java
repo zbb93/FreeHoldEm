@@ -114,7 +114,6 @@ public class Player {
 	 * @return true if player is folded and false otherwise.
 	 */
 	public boolean checkFold() {
-
 		return this.isFolded;
 	}
 

@@ -1,5 +1,6 @@
 package org.github.zbb93.FreeHoldEm;
 
+import com.google.common.collect.Lists;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -26,8 +27,7 @@ public class StraightTest {
 		Card card7 = new Card(Card.Suit.SPADES, 2);
 		p.setCards(0, card1);
 		p.setCards(1, card2);
-		Card[] table = {card3, card4, card5, card6, card7};
-		FreeHoldEm game = new FreeHoldEm(table);
+		FreeHoldEm game = new FreeHoldEm(Lists.newArrayList(card3, card4, card5, card6, card7));
 		he.findBestHand(game, p);
 		Card[] expectedCards = {card5, card4, card3, card2, card1};
 		Hand expectedHand = new Hand(expectedCards);
@@ -47,7 +47,7 @@ public class StraightTest {
 		p.setCards(0, card1);
 		p.setCards(1, card2);
 		Card[] table = {card3, card4, card5, card6, card7};
-		FreeHoldEm game = new FreeHoldEm(table);
+		FreeHoldEm game = new FreeHoldEm(Lists.newArrayList(card3, card4, card5, card6, card7));
 		HandEvaluator he = new HandEvaluator();
 		he.findBestHand(game, p);
 		Card[] expectedCards = {card7, card5, card3, card2, card1};
@@ -68,7 +68,7 @@ public class StraightTest {
 		p.setCards(0, card1);
 		p.setCards(1, card2);
 		Card[] table = {card3, card4, card5, card6, card7};
-		FreeHoldEm game = new FreeHoldEm(table);
+		FreeHoldEm game = new FreeHoldEm(Lists.newArrayList(card3, card4, card5, card6, card7));
 		HandEvaluator he = new HandEvaluator();
 		he.findBestHand(game, p);
 		Card[] expectedCards = {card1, card3, card5, card7, card4};
