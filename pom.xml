@@ -33,7 +33,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>edu.uab.cis.zbb.FreeHoldEm.Game</mainClass>
+          <mainClass>org.github.zbb93.FreeHoldEm.Game</mainClass>
           <arguments>
           </arguments>
         </configuration>

@@ -1,4 +1,4 @@
-package edu.uab.cis.zbb.FreeHoldEm;
+package org.github.zbb93.FreeHoldEm;
 
 import static org.junit.Assert.*;
 
@@ -8,8 +8,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 /*
-import edu.uab.cis.zbb.FreeHoldEm.HighScore;
-import edu.uab.cis.zbb.FreeHoldEm.HighScoreFile;*/
+import HighScore;
+import HighScoreFile;*/
 //An example of testing.
 public class HighScoreFileTest {
 	
@@ -47,7 +47,7 @@ public class HighScoreFileTest {
 		file.addHighScore(new HighScore("Mark", 555));
 		file.writePlayersIntoFile();
 		file.loadFile();
-		assertEquals("Mark" + HighScore.getHighScoreDelimiter() + "555\n", file.getHighScoreByPlayer("Mark"));
+		assertEquals("Mark" + HighScore.HIGHSCORE_DELIMITER + "555\n", file.getHighScoreByPlayer("Mark"));
 	}
 	
 	@After

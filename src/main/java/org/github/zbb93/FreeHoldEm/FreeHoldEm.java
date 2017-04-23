@@ -1,4 +1,4 @@
-package edu.uab.cis.zbb.FreeHoldEm;
+package org.github.zbb93.FreeHoldEm;
 /*
  * FreeHoldEm
  * Copyright 2015 by Zachary Bowen
@@ -27,7 +27,7 @@ package edu.uab.cis.zbb.FreeHoldEm;
  */
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Scanner;
+
 /**
  * @author Zachary Bowen
  */

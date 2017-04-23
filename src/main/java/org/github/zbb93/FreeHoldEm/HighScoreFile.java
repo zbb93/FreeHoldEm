@@ -1,4 +1,4 @@
-package edu.uab.cis.zbb.FreeHoldEm;
+package org.github.zbb93.FreeHoldEm;
 
 import java.io.BufferedWriter;
 import java.io.File;

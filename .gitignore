@@ -4,6 +4,8 @@
 .settings/
 .classpath
 .project
+.idea/
+*.iml
 
 #high score file
 high_scores.dat

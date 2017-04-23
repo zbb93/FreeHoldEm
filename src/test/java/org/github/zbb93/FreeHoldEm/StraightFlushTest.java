@@ -1,14 +1,14 @@
-package edu.uab.cis.zbb.FreeHoldEm;
+package org.github.zbb93.FreeHoldEm;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 /*
-import edu.uab.cis.zbb.FreeHoldEm.Card;
-import edu.uab.cis.zbb.FreeHoldEm.FreeHoldEm;
-import edu.uab.cis.zbb.FreeHoldEm.Hand;
-import edu.uab.cis.zbb.FreeHoldEm.HandEvaluator;
-import edu.uab.cis.zbb.FreeHoldEm.Player;*/
+import Card;
+import FreeHoldEm;
+import Hand;
+import HandEvaluator;
+import Player;*/
 
 public class StraightFlushTest {
 

@@ -1,4 +1,4 @@
-package edu.uab.cis.zbb.FreeHoldEm;
+package org.github.zbb93.FreeHoldEm;
 /*
  * Represents a player in a card game, can be either
  * CPU or human

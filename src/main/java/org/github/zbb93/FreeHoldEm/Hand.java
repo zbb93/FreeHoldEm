@@ -1,4 +1,4 @@
-package edu.uab.cis.zbb.FreeHoldEm;
+package org.github.zbb93.FreeHoldEm;
 /*
  *  From http://www.codeproject.com/Articles/38821/Make-a-poker-hand-evalutator-in-Java
  *  with very few modifications

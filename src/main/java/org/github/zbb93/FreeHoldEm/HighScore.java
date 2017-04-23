@@ -1,4 +1,4 @@
-package edu.uab.cis.zbb.FreeHoldEm;
+package org.github.zbb93.FreeHoldEm;
 //So we can sort them in arrayList
 public class HighScore {
 	private final String name;
