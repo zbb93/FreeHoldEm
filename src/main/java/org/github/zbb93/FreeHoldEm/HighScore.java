@@ -25,7 +25,7 @@ public class HighScore {
 	 */
 	@Override
 	public String toString() {
-		String asString = new String("");
+		String asString = "";
 		asString += name;
 		asString += HIGHSCORE_DELIMITER;
 		asString += Integer.toString(score);

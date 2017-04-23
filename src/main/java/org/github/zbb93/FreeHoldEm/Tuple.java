@@ -1,8 +1,8 @@
 package org.github.zbb93.FreeHoldEm;
 public class Tuple {
 
-    public int x;
-    public int y;
+    public final int x;
+    public final int y;
 
     public Tuple(int x, int y) {
 

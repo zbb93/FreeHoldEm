@@ -5,21 +5,19 @@ package org.github.zbb93.FreeHoldEm;
  */
 public class Hand {
 
-	private Card[] cards;
-	private int[] value;
+	private final Card[] cards;
+	private final int[] value;
 
 	public Hand(Card[] hand) {
 		cards = new Card[hand.length];
 		value = new int[6];
-		for (int i = 0; i < hand.length; i++) {
-			this.cards[i] = hand[i];
-		}
+		System.arraycopy(hand, 0, this.cards, 0, hand.length);
 		int[] ranks = new int[15];
 		for (int i = 0; i < ranks.length; i++) {
 			ranks[i] = 0;
 		}
-		for (int i = 0; i < cards.length; i++) {
-			ranks[cards[i].getValue()]++;
+		for (Card card : cards) {
+			ranks[card.getValue()]++;
 		}
 		//Evaluate hand for pairs, 3 of a kind, 4 of a kind, full house
 		int sameCards = 1, sameCards2 = 1;
@@ -41,8 +39,9 @@ public class Hand {
 		//Evaluate hand for flush
 		boolean flush = true;
 		for (int i = 0; i < cards.length - 1; i++) {
-			if (cards[i].getSuit() != cards[i+1].getSuit())
+			if (!cards[i].getSuit().equals(cards[i+1].getSuit())) {
 				flush = false;
+			}
 		}
 		//Evaluate hand for straight
 		int straightHighVal = 0;
@@ -137,44 +136,43 @@ public class Hand {
 	//TODO: Change 1, 11, 12, 13 to display ace, jack, king, queen.
 	@Override
 	public String toString() {
-		String hand = "";
-		for (int i = 0; i < this.cards.length; i++) {
-			hand += cards[i].toString();
-			hand += "\n";
+		StringBuilder sb = new StringBuilder();
+		for (Card card : cards) {
+			sb.append(card);
+			sb.append("\n");
 		}
 		switch (value[0]) {
 		case 1:
-			hand += "HIGH CARD\n";
+			sb.append("HIGH CARD\n");
 			break;
 		case 2:
-			hand += "PAIR OF: " + valueOf(value[1]) + "'s\n";
+			sb.append("PAIR OF: ").append(valueOf(value[1])).append("'s\n");
 			break;
 		case 3:
-			hand += "TWO PAIR: " + valueOf(value[1]) + "'s" + " and " + value[2] + "'s\n";
+			sb.append("TWO PAIR: ").append(valueOf(value[1])).append("'s and ").append(value[2]).append("'s\n");
 			break;
 		case 4:
-			hand += "THREE OF A KIND: " + valueOf(value[1]) +
-			"'s\n";
+			sb.append("THREE OF A KIND: ").append(valueOf(value[1])).append("'s\n");
 			break;
 		case 5:
-			hand += "STRAIGHT: " + valueOf(value[1]) + " high\n";
+			sb.append("STRAIGHT: ").append(valueOf(value[1])).append(" high\n");
 			break;
 		case 6:
-			hand += "FLUSH\n";
+			sb.append("FLUSH\n");
 			break;
 		case 7:
-			hand += "FULL HOUSE: Pair of " + valueOf(value[2])
-			+ "'s\n" + "Three of a kind: " + valueOf(value[1])
-			+ "'s\n";
+			sb.append("FULL HOUSE: Pair of ").append(valueOf(value[2]))
+			.append("'s\nThree of a kind: ").append(valueOf(value[1]))
+			.append("'s\n");
 			break;
 		case 8:
-			hand += "FOUR OF A KIND: " + valueOf(value[1]) + "'s\n";
+			sb.append("FOUR OF A KIND: ").append(valueOf(value[1])).append("'s\n");
 			break;
 		case 9:
-			hand += "STRAIGHT FLUSH: " + valueOf(value[1]) + " high\n";
+			sb.append("STRAIGHT FLUSH: ").append(valueOf(value[1])).append(" high\n");
 			break;
 		}
-		return hand;
+		return sb.toString();
 	}
 	/**
 	 * Compares two hands to determine which is better.

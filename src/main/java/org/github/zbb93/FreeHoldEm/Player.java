@@ -1,22 +1,22 @@
 package org.github.zbb93.FreeHoldEm;
 /*
- * Represents a player in a card game, can be either
- * CPU or human
- * 
- * TODO: Randomly assign players an integer value
- *       that determines their personality. High
- *       value indicates a more aggressive player
- *       while lower values indicate more cautious 
- *       players?
+  Represents a player in a card game, can be either
+  CPU or human
+
+  TODO: Randomly assign players an integer value
+        that determines their personality. High
+        value indicates a more aggressive player
+        while lower values indicate more cautious
+        players?
  */
 public class Player {
 
-	private String name;
-	private Card[] hand = new Card[2];
+	private final String name;
+	private final Card[] hand = new Card[2];
 	private Hand finalHand;
 	private int chips;
 	private boolean isFolded;
-	private boolean isHuman;
+	private final boolean isHuman;
 	private int betThisRound;
 
 	/**
@@ -145,13 +145,13 @@ public class Player {
 
 
 
-	@Override
 	/**
 	 * Converts player hand to a string value.
 	 * @return A string made of the string value of card1 followed by card2.
 	 * Note currently only returns the cards that are in the players hand,
 	 * not those that may be included in the best hand.
 	 */
+	@Override
 	public String toString() {
 
 		String card1 = hand[0].toString();

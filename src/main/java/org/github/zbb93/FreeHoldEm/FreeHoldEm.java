@@ -57,9 +57,9 @@ public class FreeHoldEm {
 	 */
 	private int pot = 0;
 
-	private HandEvaluator he = new HandEvaluator();
+	private final HandEvaluator he = new HandEvaluator();
 	
-	private Deck deck = new Deck();
+	private final Deck deck = new Deck();
 	
 	private boolean[] blinds;
 	
@@ -403,20 +403,20 @@ public class FreeHoldEm {
 	}
 
 	private String playerHandsAsStrings() {
-		String handsAsString = "";
+		StringBuilder sb = new StringBuilder();
 		for (Player player : players) {
 			if (player.isHuman()) {
-				handsAsString += "Your Cards: ";
+				sb.append("Your Cards: ");
 				Card[] cards = player.getCards();
-				handsAsString += cards[0].toString() + " ";
-				handsAsString += cards[1].toString() + "\n";
+				sb.append(cards[0].toString()).append(" ");
+				sb.append(cards[1].toString()).append("\n");
 			} else {
-				handsAsString += player.getName() + "'s Cards: ";
+				sb.append(player.getName()).append("'s Cards: ");
 				Card[] cards = player.getCards();
-				handsAsString += cards[0].toString() + " ";
-				handsAsString += cards[1].toString() + "\n";
+				sb.append(cards[0].toString()).append(" ");
+				sb.append(cards[1].toString()).append("\n");
 			}
 		}
-		return handsAsString;
+		return sb.toString();
 	}
 }

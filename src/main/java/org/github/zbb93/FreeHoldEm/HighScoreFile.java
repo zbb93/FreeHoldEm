@@ -1,20 +1,18 @@
 package org.github.zbb93.FreeHoldEm;
 
+import com.google.common.collect.Lists;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class HighScoreFile {
-	private File highScoreFile;
-	private ArrayList<HighScore> highscores = new ArrayList<HighScore>();
+	private final File highScoreFile;
+	private List<HighScore> highscores = Lists.newArrayList();
 	private String path = "";
 	
 	public HighScoreFile(String path) {
@@ -27,20 +25,25 @@ public class HighScoreFile {
 		}
 		else {
 			try {
-				highScoreFile.createNewFile();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-				System.out.println("Cannot create a new highscore file.");
+				if(!highScoreFile.createNewFile()) {
+					handleIoException(new IOException("Cannot create a new highscore file."));
+				}
+			} catch (IOException e) {
+				handleIoException(e);
 			}
 		}
 		
+	}
+
+	private void handleIoException(IOException e) {
+		e.printStackTrace();
+		System.out.println(e.getMessage());
 	}
 	
 	/**
 	 * Returns List of Highscores
 	 */
-	public ArrayList<HighScore> getHighScoreList() {
+	public List<HighScore> getHighScoreList() {
 		return highscores;
 	}
 	public void addHighScore(HighScore h) {
@@ -54,16 +57,12 @@ public class HighScoreFile {
 	 */
 	public void sortHighScores() {
 		
-		Collections.sort(highscores, new Comparator<HighScore>() {
-	        @Override
-	        public int compare(HighScore  h1, HighScore  h2)
-	        {
-	        	//Descending order. If you want ascending order return first - second.
-	        	int first = h1.getScore();
-	        	int second = h2.getScore();
-	          return  second - first;
-	        }
-	    });
+		highscores.sort((h1, h2) -> {
+			//Descending order. If you want ascending order return first - second.
+			int first = h1.getScore();
+			int second = h2.getScore();
+			return second - first;
+		});
 	}
 	public boolean exists() {
 		return highScoreFile.exists();
@@ -73,7 +72,9 @@ public class HighScoreFile {
 	 */
 	public void delete() {
 		if(highScoreFile.exists()) {
-			highScoreFile.delete();
+			if(!highScoreFile.delete()) {
+				handleIoException(new IOException("An error occurred while attempting to delete the file."));
+			}
 		}
 		
 	}
@@ -82,13 +83,10 @@ public class HighScoreFile {
 	 */
 	public String getHighScoreByPlayer(String name) {
 		if(!highscores.isEmpty()) {
-		  Iterator<HighScore> iterator = highscores.iterator();
-		  while (iterator.hasNext()) {
-		    HighScore highScore = iterator.next();
-		    if (highScore.getName().equals(name)) {
-		      return highScore.toString();
-		    }
-		  }
+			for (HighScore highScore : highscores)
+				if (highScore.getName().equals(name)) {
+					return highScore.toString();
+				}
 		}
 		return "No highscore found.";
 	}
@@ -109,6 +107,8 @@ public class HighScoreFile {
 
 		}
 		catch (IOException e) {
+			// todo we can stop printing the throwable once we start using a logging system.
+			//noinspection ThrowablePrintedToSystemOut
 			System.err.println(e);
 		}
 		finally {
@@ -126,8 +126,8 @@ public class HighScoreFile {
 	/**
 	 * Loads saved highscores from file.
 	 */
-	public ArrayList<HighScore> loadHighScores(Scanner scoreScanner) {
-		ArrayList<HighScore> highscores = new ArrayList<HighScore>(10);
+	private List<HighScore> loadHighScores(Scanner scoreScanner) {
+		List<HighScore> highscores = Lists.newArrayListWithCapacity(10);
 		//Read previous highscores
 		try {
 			while (scoreScanner.hasNext()) {
@@ -197,12 +197,11 @@ public class HighScoreFile {
 	}
 	
 	public String toString() {
-	  Iterator<HighScore> iterator = highscores.iterator();
-	  String hsAsString = "";
-	  while (iterator.hasNext()) {
-	    hsAsString += iterator.next().toString();
+	  StringBuilder sb = new StringBuilder();
+	  for (HighScore highScore : highscores) {
+	    sb.append(highScore.toString());
 	  }
-	  return hsAsString;
+	  return sb.toString();
 	}
 	
 }

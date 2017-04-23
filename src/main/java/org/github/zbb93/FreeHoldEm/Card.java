@@ -1,12 +1,15 @@
 package org.github.zbb93.FreeHoldEm;
+
+import java.util.Objects;
+
 /**
  * Simple class that represents a playing card.
  */
 
 public class Card {
 
-        private String suit;
-        private int value;
+        private final String suit;
+        private final int value;
 
         /**
          *Takes two parameters suit and face value of card.
@@ -49,13 +52,13 @@ public class Card {
                         return String.valueOf(value) + " of " + suit;
         }
 
-        @Override
         /**
          * Tests whether two cards are equal. Two cards are considered equal if
          * they have the same suit and the same value.
          * @param obj The object to compare this card to.
          * @return true if the cards are equal, false otherwise.
          */
+				@Override
         public boolean equals(Object obj) {
                 if (this == obj)
                         return true;
@@ -64,9 +67,6 @@ public class Card {
                 if (!(obj instanceof Card))
                         return false;
                 Card other = (Card) obj;
-                if (other.getSuit() == this.getSuit() && other.getValue() == this.getValue())
-                        return true;
-                else
-                        return false;
+					return Objects.equals(other.getSuit(), this.getSuit()) && other.getValue() == this.getValue();
         }
 }

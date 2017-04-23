@@ -1,6 +1,9 @@
 package org.github.zbb93.FreeHoldEm;
 
+import com.google.common.collect.Lists;
+
 import java.util.LinkedList;
+import java.util.List;
 
 /*
  * Class to handle evaluation of hands. One publicly exposed method accepts a player and a 
@@ -18,9 +21,7 @@ public class HandEvaluator {
 	  Card[] playerCards = player.getCards();
 	  cards[0] = playerCards[0];
 	  cards[1] = playerCards[1];
-	  for (int i = 2; i < cards.length; i++) {
-		  cards[i] = cardsOnTable[i - 2];
-	  }
+		System.arraycopy(cardsOnTable, 0, cards, 2, cards.length - 2);
 	  Card[] sortedCards = sortHand(cards);
 	  /*
 	   *Begin searching for hands (starting with best)
@@ -88,11 +89,11 @@ public class HandEvaluator {
 	  if (suit != null) {
 		  Card[] hand = new Card[5];
 		  int counter = 0;
-		  for (int i = 0; i < sortedCards.length; i++) {
+		  for (Card card : cards) {
 			  if (counter == 5)
 				  break;
-			  if (sortedCards[i].getSuit() == suit) {
-				  hand[counter] = sortedCards[i];
+			  if (card.getSuit().equals(suit)) {
+				  hand[counter] = card;
 				  counter++;
 			  }
 		  }
@@ -178,8 +179,7 @@ public class HandEvaluator {
 		  }
 	  }
 	  buildHand(hand, player);
-	  return;
-  }
+	}
   
   /**
    * Builds the best possible hand as determined by findBestHand and gives 
@@ -199,9 +199,7 @@ public class HandEvaluator {
     }
     if (nullAt > 0) {
       Card[] withoutNull = new Card[nullAt];
-      for (int i = 0; i < withoutNull.length; i++) {
-        withoutNull[i] = hand[i];
-      }
+			System.arraycopy(hand, 0, withoutNull, 0, withoutNull.length);
       Hand playerHand = new Hand(withoutNull);
       player.setHand(playerHand);
     }
@@ -268,10 +266,10 @@ private Tuple containsStraightFlush(Card[] hand) {
   private Card[] containsStraightFlush(Card[] hand) {
 	  String suit = containsFlush(hand);
 	  if (suit != null) {
-		  LinkedList<Card> matchingSuit = new LinkedList<Card>();
-		  for (int i = 0; i < hand.length; i++) {
-			  if (hand[i].getSuit().equals(suit)) {
-				  matchingSuit.add(hand[i]);
+		  List<Card> matchingSuit = Lists.newLinkedList();
+		  for (Card card : hand) {
+			  if (card.getSuit().equals(suit)) {
+				  matchingSuit.add(card);
 			  }
 		  }
 		  Card[] matchingSuitArr = new Card[matchingSuit.size()];
@@ -397,6 +395,7 @@ private Tuple containsStraight(Card[] hand) {
       index = i;
     }
     else if (hand[i].getValue() == hand[i - 1].getValue()) {
+    	// todo why is continue last statement in the loop? can this branch be removed?
       continue;
     }
     else {
@@ -431,17 +430,16 @@ private String containsFlush(Card[] hand) {
   int spades = 0;
   int clubs = 0;
   int diamonds = 0;
-  for (int i = 0; i < hand.length; i++) {
-    if (hand[i] == null)
-      break;
-    if (hand[i].getSuit() == "hearts")
-      hearts++;
-    else if (hand[i].getSuit() == "spades")
-      spades++;
-    else if (hand[i].getSuit() == "clubs")
-      clubs++;
-    else if (hand[i].getSuit() == "diamonds")
-      diamonds++;
+  for (Card card : hand) {
+    if ("hearts".equals(card.getSuit())) {
+			hearts++;
+		} else if ("spades".equals(card.getSuit())) {
+			spades++;
+		} else if ("clubs".equals(card.getSuit())) {
+			clubs++;
+		} else if ("diamonds".equals(card.getSuit())) {
+			diamonds++;
+		}
   }
   if (hearts >= 5) 
     return "hearts";

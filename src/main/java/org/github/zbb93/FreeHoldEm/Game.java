@@ -1,6 +1,7 @@
 package org.github.zbb93.FreeHoldEm;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 public class Game {
 	/**
@@ -12,7 +13,7 @@ public class Game {
      */
 	private static HighScoreFile highScoreFile;
 	
-	private static Scanner sc = new Scanner(System.in);
+	private static final Scanner sc = new Scanner(System.in);
 	
 	public static void main(String[] args) {
 		//Creates a new file or loads a existing file. 
@@ -77,7 +78,7 @@ public class Game {
 	 */
 	private static void assignHighScores(HighScoreFile hf) {
 
-	  ArrayList<HighScore> list = hf.getHighScoreList();
+	  List<HighScore> list = hf.getHighScoreList();
 	  //Create a dynamic highscore array based on loaded highscores.
 	  highScores = new HighScore[list.size()];
 	  int i = 0;
