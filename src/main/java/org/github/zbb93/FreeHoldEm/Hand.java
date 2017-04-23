@@ -1,17 +1,37 @@
+/*
+ * FreeHoldEm
+ * Copyright 2015-2017 by Zachary Bowen
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
 package org.github.zbb93.FreeHoldEm;
+
+import com.google.common.collect.Lists;
+
+import java.util.List;
+
 /*
  *  From http://www.codeproject.com/Articles/38821/Make-a-poker-hand-evalutator-in-Java
  *  with very few modifications
  */
 public class Hand {
 
-	private final Card[] cards;
+	private final List<Card> cards;
 	private final int[] value;
 
-	public Hand(Card[] hand) {
-		cards = new Card[hand.length];
+	public Hand(List<Card> hand) {
+		cards = Lists.newArrayList(hand);
 		value = new int[6];
-		System.arraycopy(hand, 0, this.cards, 0, hand.length);
 		int[] ranks = new int[15];
 		for (int i = 0; i < ranks.length; i++) {
 			ranks[i] = 0;
@@ -38,8 +58,8 @@ public class Hand {
 		}
 		//Evaluate hand for flush
 		boolean flush = true;
-		for (int i = 0; i < cards.length - 1; i++) {
-			if (!cards[i].getSuit().equals(cards[i+1].getSuit())) {
+		for (int i = 0; i < cards.size() - 1; i++) {
+			if (!cards.get(i).getSuit().equals(cards.get(i+1).getSuit())) {
 				flush = false;
 			}
 		}

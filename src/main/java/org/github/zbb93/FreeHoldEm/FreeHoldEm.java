@@ -60,8 +60,6 @@ public class FreeHoldEm {
 	 */
 	private int pot = 0;
 
-	private final HandEvaluator he = new HandEvaluator();
-	
 	private final Deck deck = new Deck();
 
 	private int currentBet = 0;
@@ -97,8 +95,8 @@ public class FreeHoldEm {
 	void dealHands() {
 		for (Player player : players) {
 			if (!player.checkFold()) {
-				player.setCards(0, deck.getNextCard());
-				player.setCards(1, deck.getNextCard());
+				player.setCard(0, deck.getNextCard());
+				player.setCard(1, deck.getNextCard());
 			}
 		}
 	}
@@ -210,7 +208,7 @@ public class FreeHoldEm {
 	void pickWinner() {
 		round = State.CLEAN_UP;
 		//Initialize final hand for human player. AI players have their final hand set when placing their bet.
-		he.findBestHand(this, players.get(0));
+		HandEvaluator.findBestHand(this, players.get(0));
 		Player winner = null;
 		for (Player player : players) {
 			if (winner == null) {
@@ -251,7 +249,7 @@ public class FreeHoldEm {
 	 * @return an integer value representing the AI's bet.
 	 */
 	private int determineAIBet(Player player) {
-		he.findBestHand(this, player);
+		HandEvaluator.findBestHand(this, player);
 		int handVal = player.getHand().quickVal();
 		//Full house or better, bet big
 		if (handVal > 7) {
@@ -410,14 +408,14 @@ public class FreeHoldEm {
 		for (Player player : players) {
 			if (player.isHuman()) {
 				sb.append("Your Cards: ");
-				Card[] cards = player.getCards();
-				sb.append(cards[0].toString()).append(" ");
-				sb.append(cards[1].toString()).append("\n");
+				List<Card> cards = player.getCards();
+				sb.append(cards.get(0).toString()).append(" ");
+				sb.append(cards.get(1).toString()).append("\n");
 			} else {
 				sb.append(player.getName()).append("'s Cards: ");
-				Card[] cards = player.getCards();
-				sb.append(cards[0].toString()).append(" ");
-				sb.append(cards[1].toString()).append("\n");
+				List<Card> cards = player.getCards();
+				sb.append(cards.get(0).toString()).append(" ");
+				sb.append(cards.get(1).toString()).append("\n");
 			}
 		}
 		return sb.toString();

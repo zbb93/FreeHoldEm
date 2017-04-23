@@ -1,4 +1,26 @@
+/*
+ * FreeHoldEm
+ * Copyright 2015-2017 by Zachary Bowen
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
 package org.github.zbb93.FreeHoldEm;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
+import java.util.List;
+
 /*
   Represents a player in a card game, can be either
   CPU or human
@@ -12,7 +34,7 @@ package org.github.zbb93.FreeHoldEm;
 public class Player {
 
 	private final String name;
-	private final Card[] hand = new Card[2];
+	private final List<Card> hand;
 	private Hand finalHand;
 	private int chips;
 	private boolean isFolded;
@@ -28,6 +50,7 @@ public class Player {
 	}
 
 	public Player(String name, boolean isHuman) {
+		hand = Lists.newArrayListWithCapacity(2);
 		this.name = name;
 		this.chips = 500;
 		this.isFolded = false;
@@ -40,9 +63,8 @@ public class Player {
 	 * @param index index in player card array to place the card.
 	 * @param card the card to place into the players hand.
 	 */
-	public void setCards(int index, Card card) {
-
-		this.hand[index] = card;
+	public void setCard(int index, Card card) {
+		hand.add(index, card);
 	}
 	/**
 	 * Method to update the hand a player currently has (cards on table +
@@ -50,7 +72,6 @@ public class Player {
 	 * @param hand the hand to give the player.
 	 */
 	public void setHand(Hand hand) {
-
 		finalHand = hand;
 	}
 	/**
@@ -58,7 +79,6 @@ public class Player {
 	 * @param newVal The updated amount of chips the player is to have.
 	 */
 	public void setChips(int newVal) {
-
 		chips = newVal;
 	}
 	/**
@@ -66,7 +86,6 @@ public class Player {
 	 * @return The current hand of the player.
 	 */
 	public Hand getHand() {
-
 		return this.finalHand;
 	}
 	/**
@@ -74,7 +93,6 @@ public class Player {
 	 * @return name of the player as string.
 	 */
 	public String getName() {
-
 		return this.name;
 	}
 	/**
@@ -82,8 +100,7 @@ public class Player {
 	 * @return Two element card array representing initial cards a player
 	 * was dealt.
 	 */
-	public Card[] getCards() {
-
+	public List<Card> getCards() {
 		return this.hand;
 	}
 	/**
@@ -91,14 +108,12 @@ public class Player {
 	 * @return chips as an integer value.
 	 */
 	public int getChips() {
-
 		return this.chips;
 	}
 	/**
 	 * Method to cause a player to fold. Sets boolean isFolded to true.
 	 */
 	public void fold() {
-
 		this.isFolded = true;
 	}
 	/**
@@ -106,7 +121,6 @@ public class Player {
 	 * isFolded to false.
 	 */
 	public void unFold() {
-
 		this.isFolded = false;
 	}
 	/**
@@ -152,9 +166,6 @@ public class Player {
 	 */
 	@Override
 	public String toString() {
-
-		String card1 = hand[0].toString();
-		String card2 = hand[1].toString();
-		return (card1 + ", " + card2);
+		return Joiner.on(',').join(hand);
 	}
 }
