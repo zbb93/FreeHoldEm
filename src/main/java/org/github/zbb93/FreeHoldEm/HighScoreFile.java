@@ -1,13 +1,26 @@
+/*
+ * FreeHoldEm
+ * Copyright 2015-2017 by Zachary Bowen
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
 package org.github.zbb93.FreeHoldEm;
 
 import com.google.common.collect.Lists;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
+import java.io.*;
+import java.util.List;
+import java.util.Scanner;
 
 
 public class HighScoreFile {
@@ -97,12 +110,8 @@ public class HighScoreFile {
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter(path));
-			int count = 0;
-			Iterator<HighScore> iterator = highscores.iterator();
-			while (iterator.hasNext() && count < 10) {
-			  HighScore hs = iterator.next();
+			for (HighScore hs : highscores) {
 			  writer.write(hs.toString());
-			  count++;
 			}
 
 		}

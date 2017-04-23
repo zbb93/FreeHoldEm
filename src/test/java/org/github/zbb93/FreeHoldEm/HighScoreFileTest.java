@@ -1,16 +1,15 @@
 package org.github.zbb93.FreeHoldEm;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-/*
-import HighScore;
-import HighScoreFile;*/
-//An example of testing.
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
+// todo use another name when calling HighScoreFile#getHighScoreByPlayer to remove warning.
 public class HighScoreFileTest {
 	
 	private HighScoreFile file;
