@@ -21,14 +21,14 @@ public class Deck {
 	public Deck() {
 		for (int i = 0; i < cards.length; i++) {
 			if (i < 13) {
-				cards[i] = new Card("hearts", 13 - i);
+				cards[i] = new Card(Card.Suit.HEARTS, 13 - i);
 			}
 			else if (i < 26)
-				cards[i] = new Card("diamonds", 26 - i);
+				cards[i] = new Card(Card.Suit.DIAMONDS, 26 - i);
 			else if (i < 39)
-				cards[i] = new Card("spades", 39 - i);
+				cards[i] = new Card(Card.Suit.SPADES, 39 - i);
 			else if (i < 52)
-				cards[i] = new Card("clubs", 52 - i);
+				cards[i] = new Card(Card.Suit.CLUBS, 52 - i);
 		}
 		shuffle();
 	}

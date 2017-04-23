@@ -1,8 +1,8 @@
 package org.github.zbb93.FreeHoldEm;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 /*
 import Card;
 import FreeHoldEm;
@@ -14,13 +14,13 @@ public class StraightFlushTest {
 
 	@Test
 	public void StraightFlushandStraightTest() {
-		Card card1 = new Card("spades", 14);
-		Card card2 = new Card("spades", 13);
-		Card card3 = new Card("spades", 12);
-		Card card4 = new Card("hearts", 7);
-		Card card5 = new Card("spades", 11);
-		Card card6 = new Card("clubs", 10);
-		Card card7 = new Card("spades", 10);
+		Card card1 = new Card(Card.Suit.SPADES, 14);
+		Card card2 = new Card(Card.Suit.SPADES, 13);
+		Card card3 = new Card(Card.Suit.SPADES, 12);
+		Card card4 = new Card(Card.Suit.HEARTS, 7);
+		Card card5 = new Card(Card.Suit.SPADES, 11);
+		Card card6 = new Card(Card.Suit.CLUBS, 10);
+		Card card7 = new Card(Card.Suit.SPADES, 10);
 		Player p = new Player("test");
 		p.setCards(0, card1);
 		p.setCards(1, card2);
@@ -35,13 +35,13 @@ public class StraightFlushTest {
 	
 	@Test
 	public void testAceHighStraightFlush() {
-		Card card1 = new Card("spades", 14);
-		Card card2 = new Card("spades", 13);
-		Card card3 = new Card("spades", 12);
-		Card card4 = new Card("hearts", 7);
-		Card card5 = new Card("spades", 11);
-		Card card6 = new Card("clubs", 5);
-		Card card7 = new Card("spades", 10);
+		Card card1 = new Card(Card.Suit.SPADES, 14);
+		Card card2 = new Card(Card.Suit.SPADES, 13);
+		Card card3 = new Card(Card.Suit.SPADES, 12);
+		Card card4 = new Card(Card.Suit.HEARTS, 7);
+		Card card5 = new Card(Card.Suit.SPADES, 11);
+		Card card6 = new Card(Card.Suit.CLUBS, 5);
+		Card card7 = new Card(Card.Suit.SPADES, 10);
 		Player p = new Player("test");
 		p.setCards(0, card1);
 		p.setCards(1, card2);
@@ -56,13 +56,13 @@ public class StraightFlushTest {
 	
 	@Test
 	public void testAceLowStraightFlush() {
-		Card card1 = new Card("spades", 14);
-		Card card2 = new Card("hearts", 10);
-		Card card3 = new Card("spades", 2);
-		Card card4 = new Card("spades", 5);
-		Card card5 = new Card("spades", 3);
-		Card card6 = new Card("clubs", 7);
-		Card card7 = new Card("spades", 4);
+		Card card1 = new Card(Card.Suit.SPADES, 14);
+		Card card2 = new Card(Card.Suit.HEARTS, 10);
+		Card card3 = new Card(Card.Suit.SPADES, 2);
+		Card card4 = new Card(Card.Suit.SPADES, 5);
+		Card card5 = new Card(Card.Suit.SPADES, 3);
+		Card card6 = new Card(Card.Suit.CLUBS, 7);
+		Card card7 = new Card(Card.Suit.SPADES, 4);
 		Player p = new Player("test");
 		p.setCards(0, card1);
 		p.setCards(1, card2);
