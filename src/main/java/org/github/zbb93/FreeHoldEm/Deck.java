@@ -1,4 +1,24 @@
+//Copyright (C) 2017 Zachary Bowen
+//This file is part of FreeHoldEm.
+//
+//FreeHoldEm is free software: you can redistribute it and/or modify
+//it under the terms of the GNU General Public License as published by
+//the Free Software Foundation, either version 3 of the License, or
+//(at your option) any later version.
+//
+//FreeHoldEm is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+//
+//You should have received a copy of the GNU General Public License
+//along with FreeHoldEm.  If not, see <http://www.gnu.org/licenses/>.
 package org.github.zbb93.FreeHoldEm;
+
+import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -9,28 +29,37 @@ public class Deck {
 	/**
 	 * Deck is represented by an array of 52 cards.
 	 */
-	private final Card[] cards = new Card[52];
+	private final @NotNull List<Card> cards;
 	/**
 	 * Integer value that represents the next card in the deck
 	 */
 	private int index = 0;
 
 	/**
+	 * Size of a standard deck of playing cards
+	 */
+	private static final int STANDARD_SIZE = 52;
+
+	/**
 	 * Initializes card values and then shuffles the deck.
 	 */
 	public Deck() {
-		for (int i = 0; i < cards.length; i++) {
-			if (i < 13) {
-				cards[i] = new Card(Card.Suit.HEARTS, 13 - i);
-			}
-			else if (i < 26)
-				cards[i] = new Card(Card.Suit.DIAMONDS, 26 - i);
-			else if (i < 39)
-				cards[i] = new Card(Card.Suit.SPADES, 39 - i);
-			else if (i < 52)
-				cards[i] = new Card(Card.Suit.CLUBS, 52 - i);
-		}
+		cards = Lists.newArrayListWithCapacity(STANDARD_SIZE);
+		addCardsOfSuit(Card.Suit.HEARTS);
+		addCardsOfSuit(Card.Suit.DIAMONDS);
+		addCardsOfSuit(Card.Suit.SPADES);
+		addCardsOfSuit(Card.Suit.CLUBS);
 		shuffle();
+	}
+
+	/**
+	 * Adds Cards with face value 2-Ace to the deck with the given suit
+	 * @param suit The suit of the cards to be added to the deck
+	 */
+	private void addCardsOfSuit(Card.Suit suit) {
+		for (int i = 2; i < 14; i++) {
+			cards.add(new Card(suit, i));
+		}
 	}
 
 	/**
@@ -39,36 +68,29 @@ public class Deck {
 	 */
 	private void shuffle() {
 		Random numGen = new Random();
-		for (int i = cards.length - 1; i > 0; i--) {
+		for (int i = cards.size() - 1; i > 0; i--) {
 			int j = numGen.nextInt(i);
-			Card tmp = cards[i];
-			cards[i] = cards[j];
-			cards[j] = tmp;
+			Card tmp = cards.get(i);
+			cards.add(i, cards.get(j));
+			cards.add(j, tmp);
 		}
-	}
-
-	/**
-	 * Gets the card at the given index.
-	 * @param index The index of the card.
-	 * @return The card at index.
-	 */
-	public Card getCard(int index) {
-		return cards[index];
 	}
 
 	/**
 	 * Gets the card from the top of the deck. If the deck is empty then it is
 	 * reshuffled and the index is reset to zero.
 	 */
+	@NotNull
 	public Card getNextCard() {
-		if (index < 52) {
-			return this.cards[index++];
+		if (index < STANDARD_SIZE) {
+			return cards.get(index++);
 		} else {
 			this.shuffle();
 			index = 0;
-			return this.cards[index];
+			return cards.get(index);
 		}
 	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
