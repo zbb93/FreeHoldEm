@@ -18,8 +18,10 @@ package org.github.zbb93.FreeHoldEm;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,7 +62,7 @@ public class Round {
 		}
 		boolean looped = false;
 		while (playersInOrder.size() < players.size() && (!looped || i <= bigBlindPlayer)) {
-			if (!players.get(i).checkFold()) {
+			if (!players.get(i).isFolded()) {
 				playersInOrder.add(players.get(i));
 			}
 			if (i < players.size() - 1) {
@@ -83,29 +85,30 @@ public class Round {
 		return toReturn;
 	}
 
-	public int bet(@NotNull List<Card> cardsOnTable) {
-		boolean first = true;
-		for (Map.Entry<Player, Integer> entry : playersToBets.entrySet()) {
-			Player player = entry.getKey();
-			int playerBet = player.bet(cardsOnTable, round, bet);
-			int currentPlayerBet = playerBet + entry.getValue();
-			if (currentPlayerBet < bet) {
-				player.fold();
-			} else if (currentPlayerBet > bet) {
-				// start over again
-				entry.setValue(currentPlayerBet);
-				if (!first) {
-					prepareForNewBettingOrder(player);
-					return bet(cardsOnTable);
+	public void bet(@NotNull List<Card> cardsOnTable) {
+		if (playersToBets.size() > 1) {
+			boolean first = true;
+			for (Map.Entry<Player, Integer> entry : playersToBets.entrySet()) {
+				Player player = entry.getKey();
+				int playerBet = player.bet(cardsOnTable, round, bet);
+				int currentPlayerBet = playerBet + entry.getValue();
+				if (currentPlayerBet < bet) {
+					player.fold();
+				} else if (currentPlayerBet > bet) {
+					// start over again
+					entry.setValue(currentPlayerBet);
+					if (!first) {
+						prepareForNewBettingOrder(player);
+						bet(cardsOnTable);
+					} else {
+						bet = currentPlayerBet;
+					}
 				} else {
-					bet = currentPlayerBet;
+					entry.setValue(currentPlayerBet);
 				}
-			} else {
-				entry.setValue(currentPlayerBet);
+				first = false;
 			}
-			first = false;
 		}
-		return bet;
 	}
 
 	private void prepareForNewBettingOrder(Player playerThatRaised) {
@@ -117,11 +120,19 @@ public class Round {
 	@NotNull
 	private List<Player> sortPlayersIntoNewBettingOrder(@NotNull Player playerThatRaised) {
 		boolean foundPlayer = false;
-		Set<Player> players = playersToBets.keySet();
+		Set<Player> players = Sets.newHashSet(playersToBets.keySet());
 		List<Player> newBettingOrder = Lists.newLinkedList();
-		for (Player player : players) {
+		Iterator<Player> iterator = players.iterator();
+		while (!players.isEmpty()) {
+			if (!iterator.hasNext() && !players.isEmpty()) {
+				iterator = players.iterator();
+			}
+
+			Player player = iterator.next();
 			if (foundPlayer) {
-				newBettingOrder.add(player);
+				if (!player.isFolded()) {
+					newBettingOrder.add(player);
+				}
 			}
 
 			if (player.equals(playerThatRaised)) {
@@ -129,5 +140,13 @@ public class Round {
 			}
 		}
 		return newBettingOrder;
+	}
+
+	public int sumBets() {
+		int sum = 0;
+		for (Integer bet : playersToBets.values()) {
+			sum += bet;
+		}
+		return sum;
 	}
 }

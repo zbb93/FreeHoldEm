@@ -128,7 +128,7 @@ public abstract class Player {
 	 * Determines whether or not a player has chosen to fold.
 	 * @return true if player is folded and false otherwise.
 	 */
-	public boolean checkFold() {
+	public boolean isFolded() {
 		return this.isFolded;
 	}
 

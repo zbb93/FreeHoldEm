@@ -94,7 +94,7 @@ public class FreeHoldEm {
 	
 	void dealHands() {
 		for (Player player : players) {
-			if (!player.checkFold()) {
+			if (!player.isFolded()) {
 				player.setCard(0, deck.getNextCard());
 				player.setCard(1, deck.getNextCard());
 			}
@@ -127,7 +127,8 @@ public class FreeHoldEm {
 	 */
 	void bet() {
 		Round currentRound = new Round(players, bigBlindPlayer, round);
-		pot += currentRound.bet(cardsOnTable);
+		currentRound.bet(cardsOnTable);
+		pot += currentRound.sumBets();
 	}
 
 	void pickWinner() {
@@ -136,12 +137,12 @@ public class FreeHoldEm {
 		HandEvaluator.findBestHand(cardsOnTable, players.get(0));
 		Player winner = null;
 		for (Player player : players) {
-			if (winner == null) {
-				if (!player.checkFold()) {
+			if (!player.isFolded()) {
+				if (winner == null) {
+					winner = player;
+				} else if (winner.getHand().compareTo(player.getHand()) == -1) {
 					winner = player;
 				}
-			} else if (winner.getHand().compareTo(player.getHand()) == -1) {
-				winner = player;
 			}
 		}
 
@@ -231,7 +232,7 @@ public class FreeHoldEm {
 		}
 		boolean looped = false;
 		while (playersInOrder.size() < players.size() && (!looped || i <= bigBlindPlayer)) {
-			if (!players.get(i).checkFold()) {
+			if (!players.get(i).isFolded()) {
 				playersInOrder.add(players.get(i));
 			}
 			if (i < players.size() - 1) {
@@ -267,7 +268,7 @@ public class FreeHoldEm {
 			if (indexOfPlayerToAdd == indexOfPlayerThatRaised) {
 				break;
 			}
-			if (!players.get(indexOfPlayerToAdd).checkFold()) {
+			if (!players.get(indexOfPlayerToAdd).isFolded()) {
 				playersInOrder.add(players.get(indexOfPlayerToAdd));
 			}
 			if (indexOfPlayerToAdd < players.size() - 1) {
