@@ -1,4 +1,3 @@
-package org.github.zbb93.FreeHoldEm;
 /*
  * FreeHoldEm
  * Copyright 2015-2017 by Zachary Bowen
@@ -15,6 +14,7 @@ package org.github.zbb93.FreeHoldEm;
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
+package org.github.zbb93.FreeHoldEm;
 /*
  * TODO: Test ace low implementation	  
  * TODO: Create window containing background image (poker table)
@@ -35,7 +35,7 @@ import java.util.List;
  * @author Zachary Bowen
  */
 public class FreeHoldEm {
-	private enum State {
+	enum State {
 		INIT, FIRST, FLOP, TURN, RIVER, CLEAN_UP
 	}
 	/**
@@ -85,9 +85,9 @@ public class FreeHoldEm {
 
 	private void initPlayers(int numPlayers, String playerName) {
 		players = Lists.newArrayListWithCapacity(numPlayers);
-		players.add(new Player(playerName, true));
+		players.add(new HumanPlayer(playerName));
 		for (int i = 1; i < players.size(); i++) {
-			players.add(new Player("CPU" +
+			players.add(new ArtificialPlayer("CPU" +
 					String.valueOf(i)));
 		}
 	}
@@ -208,7 +208,7 @@ public class FreeHoldEm {
 	void pickWinner() {
 		round = State.CLEAN_UP;
 		//Initialize final hand for human player. AI players have their final hand set when placing their bet.
-		HandEvaluator.findBestHand(this, players.get(0));
+		HandEvaluator.findBestHand(cardsOnTable, players.get(0));
 		Player winner = null;
 		for (Player player : players) {
 			if (winner == null) {
@@ -249,7 +249,7 @@ public class FreeHoldEm {
 	 * @return an integer value representing the AI's bet.
 	 */
 	private int determineAIBet(Player player) {
-		HandEvaluator.findBestHand(this, player);
+		HandEvaluator.findBestHand(cardsOnTable, player);
 		int handVal = player.getHand().quickVal();
 		//Full house or better, bet big
 		if (handVal > 7) {

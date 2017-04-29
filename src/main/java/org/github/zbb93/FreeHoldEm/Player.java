@@ -31,7 +31,7 @@ import java.util.List;
         while lower values indicate more cautious
         players?
  */
-public class Player {
+public abstract class Player {
 
 	private final String name;
 	private final List<Card> hand;
@@ -168,4 +168,6 @@ public class Player {
 	public String toString() {
 		return Joiner.on(',').join(hand);
 	}
+
+	public abstract int bet(List<Card> cardsOnTable, FreeHoldEm.State round, int currentBet);
 }

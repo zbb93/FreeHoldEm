@@ -30,9 +30,9 @@ public class HandEvaluator {
 
 	}
 
-  public static void findBestHand(FreeHoldEm game, Player player) {
+  public static void findBestHand(List<Card> cardsOnTable, Player player) {
 	  List<Card> cards = Lists.newArrayListWithCapacity(7);
-	  cards.addAll(game.getCardsOnTable());
+	  cards.addAll(cardsOnTable);
 	  cards.addAll(player.getCards());
 	  List<Card> sortedCards = sortHand(cards);
 	  /*
