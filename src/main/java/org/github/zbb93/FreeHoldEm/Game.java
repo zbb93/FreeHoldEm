@@ -1,6 +1,5 @@
 package org.github.zbb93.FreeHoldEm;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 public class Game {
@@ -69,7 +68,7 @@ public class Game {
 	 * @param game TODO: description
 	 */
 	private static void betLoop(FreeHoldEm game) {
-		game.initialBet();
+		game.bet();
 	}
 	
 	/**

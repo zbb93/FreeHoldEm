@@ -15,6 +15,7 @@
 //along with FreeHoldEm.  If not, see <http://www.gnu.org/licenses/>.
 package org.github.zbb93.FreeHoldEm;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +30,7 @@ public class Deck {
 	/**
 	 * Deck is represented by an array of 52 cards.
 	 */
-	private final @NotNull List<Card> cards;
+	private @NotNull List<Card> cards;
 	/**
 	 * Integer value that represents the next card in the deck
 	 */
@@ -44,12 +45,12 @@ public class Deck {
 	 * Initializes card values and then shuffles the deck.
 	 */
 	public Deck() {
-		cards = Lists.newArrayListWithCapacity(STANDARD_SIZE);
+		cards = Lists.newArrayListWithCapacity(52);
 		addCardsOfSuit(Card.Suit.HEARTS);
 		addCardsOfSuit(Card.Suit.DIAMONDS);
 		addCardsOfSuit(Card.Suit.SPADES);
 		addCardsOfSuit(Card.Suit.CLUBS);
-		shuffle();
+		cards = shuffle();
 	}
 
 	/**
@@ -62,18 +63,15 @@ public class Deck {
 		}
 	}
 
-	/**
-	 * Fisher-Yates shuffle used to shuffle elements of card array
-	 * in place.
-	 */
-	private void shuffle() {
+	private List<Card> shuffle() {
 		Random numGen = new Random();
-		for (int i = cards.size() - 1; i > 0; i--) {
-			int j = numGen.nextInt(i);
-			Card tmp = cards.get(i);
-			cards.add(i, cards.get(j));
-			cards.add(j, tmp);
+		List<Card> toShuffle = Lists.newArrayList(cards);
+		List<Card> toReturn = Lists.newLinkedList();
+		while (!toShuffle.isEmpty()) {
+			int i = numGen.nextInt(toShuffle.size());
+			toReturn.add(toShuffle.remove(i));
 		}
+		return ImmutableList.copyOf(toReturn);
 	}
 
 	/**

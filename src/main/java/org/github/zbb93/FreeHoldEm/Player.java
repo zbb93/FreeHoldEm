@@ -112,6 +112,7 @@ public abstract class Player {
 	}
 	/**
 	 * Method to cause a player to fold. Sets boolean isFolded to true.
+	 * todo should this be a private method that is called from Player#bet?
 	 */
 	public void fold() {
 		this.isFolded = true;

@@ -86,7 +86,7 @@ public class FreeHoldEm {
 	private void initPlayers(int numPlayers, String playerName) {
 		players = Lists.newArrayListWithCapacity(numPlayers);
 		players.add(new HumanPlayer(playerName));
-		for (int i = 1; i < players.size(); i++) {
+		for (int i = 1; i < numPlayers; i++) {
 			players.add(new ArtificialPlayer("CPU" +
 					String.valueOf(i)));
 		}
@@ -125,85 +125,10 @@ public class FreeHoldEm {
 	 * Betting continues and the remaining players must match the new bet.
 	 *
 	 */
-	void initialBet() {
-		//Create a collection of players that represents the betting order.
-		Collection<Player> playersInOrder = sortPlayersIntoInitialBettingOrder();
-		players.get(smallBlindPlayer).deductChips(LITTLE_BLIND);
-		players.get(bigBlindPlayer).deductChips(BIG_BLIND);
-		currentBet = BIG_BLIND;
-		pot += BIG_BLIND + LITTLE_BLIND;
-		for (Player p : playersInOrder) {
-			//TODO: Ensure player bet is valid
-			if (p.isHuman()) {
-				int playerBet = Game.getBetFromPlayer();
-				if (playerBet == 0) {
-					p.fold();
-				} else {
-					p.deductChips(playerBet);
-					pot += playerBet;
-					if (playerBet > currentBet) {
-						currentBet = playerBet;
-						bet(sortPlayersIntoBettingOrder(p));
-						break;
-					}
-				}
-			} else {
-				//Ensuring that the bet is valid is handled in determineAIBet method
-				int AIBet = determineAIBet(p);
-				if (AIBet == 0) {
-					p.fold();
-				} else if (AIBet < currentBet) {
-					p.fold();
-				} else {
-					p.deductChips(AIBet);
-					pot += AIBet;
-					if (AIBet > currentBet) {
-						currentBet = AIBet;
-						bet(sortPlayersIntoBettingOrder(p));
-						break;
-					}
-				}
-			}
-		}
+	void bet() {
+		Round currentRound = new Round(players, bigBlindPlayer, round);
+		pot += currentRound.bet(cardsOnTable);
 	}
-
-	private void bet(Collection<Player> playersInOrder) {
-		//Create a collection of players that represents the betting order.
-		for (Player p : playersInOrder) {
-			//TODO: Ensure player bet is valid
-			if (p.isHuman()) {
-				int playerBet = Game.getBetFromPlayer();
-				if (playerBet == 0) {
-					p.fold();
-				} else {
-					p.deductChips(playerBet);
-					pot += playerBet;
-					if (playerBet > currentBet) {
-						currentBet = playerBet;
-						bet(sortPlayersIntoBettingOrder(p));
-						break;
-					}
-				}
-			} else {
-				//Ensuring that the bet is valid is handled in determineAIBet method
-				int AIBet = determineAIBet(p);
-				if (AIBet == 0) {
-					p.fold();
-				} else if (AIBet < currentBet) {
-					p.fold();
-				} else {
-					p.deductChips(AIBet);
-					pot += AIBet;
-					if (AIBet > currentBet) {
-						currentBet = AIBet;
-						bet(sortPlayersIntoBettingOrder(p));
-						break;
-					}
-				}
-			}
-		}
-	}
-
 
 	void pickWinner() {
 		round = State.CLEAN_UP;

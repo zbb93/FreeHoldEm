@@ -185,7 +185,7 @@ public class HandEvaluator {
 
 	  //High card hand
 	  List<Card> hand = Lists.newArrayListWithCapacity(5);
-	  for (int i = 0; i < 5; i++) {
+	  for (int i = 0; i < 5 && i < sortedCards.size(); i++) {
 		  if (sortedCards.get(i) != null) {
 			  hand.add(i, sortedCards.get(i));
 		  }
