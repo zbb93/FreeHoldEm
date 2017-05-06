@@ -6,7 +6,7 @@ public class Game {
 	/**
 	 * Array to store the current high scores. It is initialized in assignHighScores function.
 	 */
-	private static HighScore[] highScores;
+	private static List<HighScore> highScores;
     /**
      * Handles highScore file I/O.   
      */
@@ -48,7 +48,7 @@ public class Game {
 				game.newHand();
 			}
 		}
-		if (game.getPlayerScore() > highScores[highScores.length - 1].getScore()) {
+		if (game.getPlayerScore() > highScores.get(highScores.size() - 1).getScore()) {
 			writeNewScore(game.getPlayerScore());
 		}
 		
@@ -72,15 +72,7 @@ public class Game {
 	 * @param hf = HighScoreFile
 	 */
 	private static void assignHighScores(HighScoreFile hf) {
-
-	  List<HighScore> list = hf.getHighScoreList();
-	  //Create a dynamic highscore array based on loaded highscores.
-	  highScores = new HighScore[list.size()];
-	  int i = 0;
-	  for (HighScore highScore : list) {
-	    highScores[i] = highScore;
-	    i++;
-	  }
+	  highScores = hf.getHighScoreList();
 	}
 	
 	/**
