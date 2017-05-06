@@ -29,16 +29,16 @@ public class Game {
 		while (playing) {
 			game.dealHands();
 			System.out.println(game.toString());
-			betLoop(game);
+			game.bet();
 			game.dealFlop();
 			System.out.println(game.toString());
-			betLoop(game);
+			game.bet();
 			game.dealTurn();
 			System.out.println(game.toString());
-			betLoop(game);
+			game.bet();
 			game.dealRiver();
 			System.out.println(game.toString());
-			betLoop(game);
+			game.bet();
 			game.pickWinner();
 			System.out.println(game.toString());
 			System.out.print("Would you like to play another hand? (y/n):");
@@ -68,17 +68,6 @@ public class Game {
 		return bet;
 	}
 
-	/**
-	 * Betting begins with player after the big blind.
-	 * If a bet has been made already the player can match the bet or raise
-	 * If a player raises the minimum raise becomes their raise and all future raises must be at least this size.
-	 * Betting continues and the remaining players must match the new bet.
-	 * @param game TODO: description
-	 */
-	private static void betLoop(FreeHoldEm game) {
-		game.bet();
-	}
-	
 	/**
 	 * Assigns loaded highscores into highScores array.
 	 * @param hf = HighScoreFile
