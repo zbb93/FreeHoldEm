@@ -28,7 +28,6 @@ package org.github.zbb93.FreeHoldEm;
 
 import com.google.common.collect.Lists;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -65,6 +64,19 @@ public class FreeHoldEm {
 	private int bigBlindPlayer = 1;
 
 	/**
+	 * This variable controls whether or not AI hands are printed during gameplay. Should only be true for development
+	 * purposes unless you want ez mode.
+	 */
+	private boolean developmentMode = false;
+
+	/**
+	 * This variable will be null until the FreeHoldEm#pickWinner method is called. If there is a winner then this
+	 * variable will be initialized and can be used to construct the game state string that is displayed to the user.
+	 * If the user elects to play another game this variable will be nulled out during initialization.
+	 */
+	private Player winner;
+
+	/**
 	 * Constructor used for testing purposes. The game will be initialized with
 	 * the cards passed to the constructor.
 	 * @param cards - Array of cards representing cards currently on the table.
@@ -80,6 +92,7 @@ public class FreeHoldEm {
 	}
 
 	private void initPlayers(int numPlayers, String playerName) {
+		winner = null;
 		players = Lists.newArrayListWithCapacity(numPlayers);
 		players.add(new HumanPlayer(playerName));
 		for (int i = 1; i < numPlayers; i++) {
@@ -119,7 +132,6 @@ public class FreeHoldEm {
 	 * If a bet has been made already the player can match the bet or raise
 	 * If a player raises the minimum raise becomes their raise and all future raises must be at least this size.
 	 * Betting continues and the remaining players must match the new bet.
-	 *
 	 */
 	void bet() {
 		Round currentRound = new Round(players, bigBlindPlayer, round);
@@ -147,17 +159,11 @@ public class FreeHoldEm {
 					winner = player;
 				} else if (winner.getHand().compareTo(player.getHand()) == -1) {
 					winner = player;
+					winner.setChips(winner.getChips() + pot);
 				}
 			}
 		}
 
-		if (winner == null) {
-			System.out.println("Everyone folded!");
-		} else {
-			winner.setChips(winner.getChips() + pot);
-			System.out.printf("\n%s wins with a \n%s\nWinnings: %d\n", winner.getName(),
-					winner.getHand().toString(), pot);
-		}
 	}
 	
 	void newHand() {
@@ -172,120 +178,7 @@ public class FreeHoldEm {
 			}
 		}
 	}
-	/**
-	 * Determines the value of an AI's hand. The value is taken from the Hand class.
-	 * Based on the value the AI places a certain bet or folds.
-	 * @param player The AI that is currently betting.
-	 * @return an integer value representing the AI's bet.
-	 */
-	private int determineAIBet(Player player) {
-		HandEvaluator.findBestHand(cardsOnTable, player);
-		int handVal = player.getHand().quickVal();
-		//Full house or better, bet big
-		if (handVal > 7) {
-			if (currentBet < 100) {
-				return 100;
-			} else if (currentBet < 150) {
-				return currentBet;
-			} else {
-				return 0;
-			}
-		}
-		//Tree of a kind - Straight
-		else if (handVal > 3) {
-			if (currentBet < 65) {
-				return 65;
-			} else if (currentBet < 100) {
-				return currentBet;
-			} else {
-				return 0;
-			}
-		}
-		//Two pair - Flush
-		else if (handVal > 1) {
-			if (currentBet < 30) {
-				return 30;
-			} else if (currentBet < 45) {
-				return currentBet;
-			} else {
-				return 0;
-			}
-		}
-		else if (round == State.INIT || round == State.FLOP) {
-			return 10;
-		}
-		else {
-			return 0;
-		}
-   	    	 
-	}
 
-	/**
-	 * This method sorts the players into the order they will bet in.
-	 * Players that have folded are not added to the list.
-	 * The player after the player that placed the big blind goes first and the big blind goes last.
-	 * @return a collection of players in the order they will bet.
-	 */
-	private Collection<Player> sortPlayersIntoInitialBettingOrder() {
-		List<Player> playersInOrder = Lists.newArrayList();
-		int i;
-		if (bigBlindPlayer < players.size() - 1) {
-			i = bigBlindPlayer + 1;
-		} else {
-			i = 0;
-		}
-		boolean looped = false;
-		while (playersInOrder.size() < players.size() && (!looped || i <= bigBlindPlayer)) {
-			if (!players.get(i).isFolded()) {
-				playersInOrder.add(players.get(i));
-			}
-			if (i < players.size() - 1) {
-				i++;
-			} else {
-				i = 0;
-				looped = true;
-			}
-
-		}
-		return playersInOrder;
-	}
-
-	private Collection<Player> sortPlayersIntoBettingOrder(Player p) {
-		//determine which player this is
-		int indexOfPlayerThatRaised = -1;
-		int indexOfPlayerToAdd = -1;
-		for (int i = 0; i < players.size(); i++) {
-			if (players.get(i).equals(p)) {
-				if (i == players.size() - 1) {
-					indexOfPlayerThatRaised = i;
-					indexOfPlayerToAdd = 0;
-				} else {
-					indexOfPlayerThatRaised = i;
-					indexOfPlayerToAdd = i + 1;
-				}
-				break;
-			}
-		}
-		List<Player> playersInOrder = Lists.newArrayList();
-		//The player that made the raise will not get to bet again.
-		while (playersInOrder.size() < players.size() - 1) {
-			if (indexOfPlayerToAdd == indexOfPlayerThatRaised) {
-				break;
-			}
-			if (!players.get(indexOfPlayerToAdd).isFolded()) {
-				playersInOrder.add(players.get(indexOfPlayerToAdd));
-			}
-			if (indexOfPlayerToAdd < players.size() - 1) {
-				indexOfPlayerToAdd++;
-			} else {
-				indexOfPlayerToAdd = 0;
-			}
-
-		}
-		return playersInOrder;
-	}
-
-	
 	List<Card> getCardsOnTable() {
 	  return this.cardsOnTable;
 	}
@@ -295,42 +188,40 @@ public class FreeHoldEm {
 	}
 
 	@Override
-	// todo use a StringBuilder
 	public String toString() {
-		//TODO: Display blinds and currentBet for all states except CLEAN_UP
-		String gameAsString = "";
+		StringBuilder sb = new StringBuilder();
+		String gameState;
 		switch(round) {
 			case INIT:
-				//TODO: add some type of flag so that computer hands aren't printed unless debug mode
-				gameAsString += playerHandsAsStrings();
+				gameState = playerHandsAsStrings();
 				break;
 			case FLOP:
-				gameAsString += "Flop: " + cardsOnTable.get(0).toString() + " " +
-					cardsOnTable.get(1).toString() + " " + cardsOnTable.get(2).toString() + "\n";
-				gameAsString += playerHandsAsStrings();
-				gameAsString += "Current Bet: " + currentBet + "\n";
-				gameAsString += "Cash in pot: " + pot + "\n";
+				gameState = String.format("Flop: %s %s %s\n%sCurrentBet: %d\nCash in pot: %d\n",
+						cardsOnTable.get(0), cardsOnTable.get(1), cardsOnTable.get(2), playerHandsAsStrings(), currentBet, pot);
 				break;
 			case TURN:
-				gameAsString += "Turn: " + cardsOnTable.get(0).toString() + " " +
-					cardsOnTable.get(1).toString() + " " + cardsOnTable.get(2).toString() + " " +
-					cardsOnTable.get(3).toString() + "\n";
-				gameAsString += playerHandsAsStrings();
-				gameAsString += "Current Bet: " + currentBet + "\n";
-				gameAsString += "Cash in pot: " + pot + "\n";
+				gameState = String.format("Turn: %s %s %s %s\n%sCurrentBet: %d\nCash in pot: %d\n",
+						cardsOnTable.get(0), cardsOnTable.get(1), cardsOnTable.get(2), cardsOnTable.get(3),
+						playerHandsAsStrings(), currentBet, pot);
 				break;
 			case RIVER:
-				gameAsString += "River: " + cardsOnTable.get(0).toString() + " " +
-					cardsOnTable.get(1).toString() + " " + cardsOnTable.get(2).toString() + " " +
-					cardsOnTable.get(3).toString() + " " + cardsOnTable.get(4) + "\n";
-				gameAsString += playerHandsAsStrings();
-				gameAsString += "Current Bet: " + currentBet + "\n";
-				gameAsString += "Cash in pot: " + pot + "\n";
+				gameState = String.format("River: %s %s %s %s %s\n%sCurrentBet: %d\nCash in pot: %d\n",
+						cardsOnTable.get(0), cardsOnTable.get(1), cardsOnTable.get(2), cardsOnTable.get(3),
+						playerHandsAsStrings(), cardsOnTable.get(4), currentBet, pot);
 				break;
 			case CLEAN_UP:
-				//TODO: move output from pickWinner method here.
+				if (winner == null) {
+					gameState = "Everyone folded";
+				} else {
+					gameState = String.format("\n%s wins with a \n%s\nWinnings: %d\n",
+							winner.getName(), winner.getHand().toString(), pot);
+				}
+				break;
+			default:
+				throw new IllegalStateException("Unrecognized FreeHoldEm.State: " + round);
 		}
-		return gameAsString;
+		sb.append(gameState);
+		return sb.toString();
 	}
 
 	private String playerHandsAsStrings() {
@@ -341,7 +232,7 @@ public class FreeHoldEm {
 				List<Card> cards = player.getCards();
 				sb.append(cards.get(0).toString()).append(" ");
 				sb.append(cards.get(1).toString()).append("\n");
-			} else {
+			} else if (developmentMode) {
 				sb.append(player.getName()).append("'s Cards: ");
 				List<Card> cards = player.getCards();
 				sb.append(cards.get(0).toString()).append(" ");

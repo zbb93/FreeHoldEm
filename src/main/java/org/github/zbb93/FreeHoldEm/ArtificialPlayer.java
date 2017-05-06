@@ -37,7 +37,6 @@ public class ArtificialPlayer extends Player {
 			return 0;
 		}
 
-
 		//Full house or better, bet big
 		if (handVal > 7) {
 			if (amountToCall < 100) {
@@ -49,9 +48,7 @@ public class ArtificialPlayer extends Player {
 			} else {
 				return 0;
 			}
-		}
-		//Tree of a kind - Straight
-		else if (handVal > 3) {
+		} else if (handVal > 3) { //Tree of a kind - Straight
 			if (amountToCall < 65) {
 				deductChips(65);
 				return 65;
@@ -61,9 +58,7 @@ public class ArtificialPlayer extends Player {
 			} else {
 				return 0;
 			}
-		}
-		//Two pair - Flush
-		else if (handVal > 1) {
+		} else if (handVal > 1) { //Two pair - Flush
 			if (amountToCall < 30) {
 				deductChips(30);
 				return 30;
@@ -73,8 +68,7 @@ public class ArtificialPlayer extends Player {
 			} else {
 				return 0;
 			}
-		}
-		else if (round == FreeHoldEm.State.INIT || round == FreeHoldEm.State.FLOP) {
+		} else if (round == FreeHoldEm.State.INIT || round == FreeHoldEm.State.FLOP) { // Pay to see the hand if it is early
 			deductChips(amountToCall);
 			return amountToCall;
 		} else {
