@@ -55,11 +55,17 @@ public class Game {
 		
 	}
 
-	// todo needs error handling: Player object will throw exception if checking is not an option and bet is not call or raise.
 	static int getBetFromPlayer(int minimumBet) {
 		System.out.println("Amount to call: " + minimumBet);
 		System.out.print("Enter your bet: ");
-		return sc.nextInt();
+		int bet = sc.nextInt();
+		if (bet < minimumBet && bet != 0) {
+			System.out.println("ERROR: You have entered an invalid bet!");
+			System.out.println("You bet " + bet + " chips, but the required amount to call is "
+					+ minimumBet + " chips. Please try again\n");
+			return getBetFromPlayer(minimumBet);
+		}
+		return bet;
 	}
 
 	/**
