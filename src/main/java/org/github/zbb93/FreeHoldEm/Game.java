@@ -40,18 +40,41 @@ public class Game {
 			game.bet();
 			game.pickWinner();
 			System.out.println(game.toString());
-			System.out.print("Would you like to play another hand? (y/n):");
-			String response = sc.next();
-			if (response.equals("n")) {
-				playing = false;
-			} else {
+			if (playAnotherGame()) {
 				game.newHand();
+			} else {
+				playing = false;
 			}
 		}
 		if (game.getPlayerScore() > highScores.get(highScores.size() - 1).getScore()) {
 			writeNewScore(game.getPlayerScore());
 		}
 		
+	}
+
+	private static boolean playAnotherGame() {
+		boolean playAgain;
+		System.out.print("Would you like to play another hand? (y/n):");
+		try {
+			playAgain = getResponseFromPlayer();
+		} catch (IllegalArgumentException e) {
+			System.out.println("Please enter 'y' or 'n'\n");
+			return playAnotherGame();
+		}
+		return playAgain;
+	}
+
+	private static boolean getResponseFromPlayer() {
+		String response = sc.next();
+		boolean responseAsBoolean;
+		if (response.equalsIgnoreCase("n") || response.equalsIgnoreCase("no")) {
+			responseAsBoolean = false;
+		} else if (response.equalsIgnoreCase("y") || response.equalsIgnoreCase("yes")){
+			responseAsBoolean = true;
+		} else {
+			throw new IllegalArgumentException("Expected values are 'y' and 'n' received: " + response);
+		}
+		return responseAsBoolean;
 	}
 
 	static int getBetFromPlayer(int minimumBet) {
