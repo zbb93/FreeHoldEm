@@ -41,7 +41,13 @@ public class Round {
 
 	public Round(@NotNull List<Player> players, int bigBlindPlayer, @NotNull FreeHoldEm.State round) {
 		playersToBets = initPlayerMap(sortPlayersIntoInitialBettingOrder(players, bigBlindPlayer));
-		bet = 0;
+		int littleBlindPlayer;
+		if (bigBlindPlayer == 0) {
+			littleBlindPlayer = players.size() - 1;
+		} else {
+			littleBlindPlayer = bigBlindPlayer - 1;
+		}
+		placeBlindBets(players.get(bigBlindPlayer), players.get(littleBlindPlayer));
 		this.round = round;
 	}
 
@@ -76,6 +82,12 @@ public class Round {
 		return playersInOrder;
 	}
 
+	private void placeBlindBets(@NotNull Player bigBlindPlayer, @NotNull Player littleBlindPlayer) {
+		playersToBets.put(bigBlindPlayer, BIG_BLIND);
+		playersToBets.put(littleBlindPlayer, LITTLE_BLIND);
+		bet = BIG_BLIND;
+	}
+
 	@NotNull
 	private Map<Player, Integer> initPlayerMap(@NotNull List<Player> players) {
 		Map<Player, Integer> toReturn = Maps.newLinkedHashMap();
@@ -87,31 +99,26 @@ public class Round {
 
 	public void bet(@NotNull List<Card> cardsOnTable) {
 		if (playersToBets.size() > 1) {
-			boolean first = true;
 			for (Map.Entry<Player, Integer> entry : playersToBets.entrySet()) {
 				Player player = entry.getKey();
-				int playerBet = player.bet(cardsOnTable, round, bet);
+				int playerBet = player.bet(cardsOnTable, round, bet - entry.getValue());
 				int currentPlayerBet = playerBet + entry.getValue();
 				if (currentPlayerBet < bet) {
 					player.fold();
-				} else if (currentPlayerBet > bet) {
+				} else if (currentPlayerBet == bet) {
+					entry.setValue(currentPlayerBet);
+				} else {
 					// start over again
 					entry.setValue(currentPlayerBet);
-					if (!first) {
-						prepareForNewBettingOrder(player);
-						bet(cardsOnTable);
-					} else {
-						bet = currentPlayerBet;
-					}
-				} else {
-					entry.setValue(currentPlayerBet);
+					prepareForNewBettingOrder(player);
+					bet(cardsOnTable);
+					bet = currentPlayerBet;
 				}
-				first = false;
 			}
 		}
 	}
 
-	private void prepareForNewBettingOrder(Player playerThatRaised) {
+	private void prepareForNewBettingOrder(@NotNull Player playerThatRaised) {
 		bet = playersToBets.get(playerThatRaised);
 		List<Player> playersInNewBettingOrder = sortPlayersIntoNewBettingOrder(playerThatRaised);
 		playersToBets = initPlayerMap(playersInNewBettingOrder);
@@ -130,6 +137,7 @@ public class Round {
 
 			Player player = iterator.next();
 			if (foundPlayer) {
+				iterator.remove();
 				if (!player.isFolded()) {
 					newBettingOrder.add(player);
 				}

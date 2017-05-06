@@ -57,7 +57,7 @@ public class Hand {
 			}
 		}
 		//Evaluate hand for flush
-		boolean flush = true;
+		boolean flush = cards.size() > 4; // no point getting excited that your suits match if you have 2 cards.
 		for (int i = 0; i < cards.size() - 1; i++) {
 			if (!cards.get(i).getSuit().equals(cards.get(i+1).getSuit())) {
 				flush = false;

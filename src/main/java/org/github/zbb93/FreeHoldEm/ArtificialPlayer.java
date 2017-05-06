@@ -28,50 +28,56 @@ public class ArtificialPlayer extends Player {
 	}
 
 	@Override
-	public int bet(List<Card> cardsOnTable, FreeHoldEm.State round, int currentBet) {
+	public int bet(List<Card> cardsOnTable, FreeHoldEm.State round, int amountToCall) {
+		boolean canCheck = amountToCall == 0;
 		HandEvaluator.findBestHand(cardsOnTable, this);
 		int handVal = getHand().quickVal();
+
+		if (canCheck && handVal == 1) {
+			return 0;
+		}
+
+
 		//Full house or better, bet big
 		if (handVal > 7) {
-			if (currentBet < 100) {
+			if (amountToCall < 100) {
 				deductChips(100);
 				return 100;
-			} else if (currentBet < 150) {
-				deductChips(currentBet);
-				return currentBet;
+			} else if (amountToCall < 150) {
+				deductChips(amountToCall);
+				return amountToCall;
 			} else {
 				return 0;
 			}
 		}
 		//Tree of a kind - Straight
 		else if (handVal > 3) {
-			if (currentBet < 65) {
+			if (amountToCall < 65) {
 				deductChips(65);
 				return 65;
-			} else if (currentBet < 100) {
-				deductChips(currentBet);
-				return currentBet;
+			} else if (amountToCall < 100) {
+				deductChips(amountToCall);
+				return amountToCall;
 			} else {
 				return 0;
 			}
 		}
 		//Two pair - Flush
 		else if (handVal > 1) {
-			if (currentBet < 30) {
+			if (amountToCall < 30) {
 				deductChips(30);
 				return 30;
-			} else if (currentBet < 45) {
-				deductChips(currentBet);
-				return currentBet;
+			} else if (amountToCall < 45) {
+				deductChips(amountToCall);
+				return amountToCall;
 			} else {
 				return 0;
 			}
 		}
 		else if (round == FreeHoldEm.State.INIT || round == FreeHoldEm.State.FLOP) {
-			deductChips(10);
-			return 10;
-		}
-		else {
+			deductChips(amountToCall);
+			return amountToCall;
+		} else {
 			return 0;
 		}
 	}

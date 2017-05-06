@@ -29,14 +29,15 @@ public class HumanPlayer extends Player {
 	}
 
 	@Override
-	public int bet(List<Card> cardsOnTable, FreeHoldEm.State round, int currentBet) {
-		int bet = Game.getBetFromPlayer();
-		if (bet == 0) {
+	public int bet(List<Card> cardsOnTable, FreeHoldEm.State round, int amountToCall) {
+		boolean canCheck = amountToCall == 0;
+		int bet = Game.getBetFromPlayer(amountToCall);
+		if (bet == 0 && !canCheck) {
 			fold();
-		} else if (bet >= currentBet) {
+		} else if (bet >= amountToCall) {
 			deductChips(bet);
 		} else {
-			// todo invalid bet
+			throw new IllegalArgumentException("Human player has entered an invalid bet.");
 		}
 		return bet;
 	}

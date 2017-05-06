@@ -52,7 +52,6 @@ public class FreeHoldEm {
 	 * Integer used to describe the current phase of the game. Used by the AI to
 	 * determine when the AI should fold when they have no hand.
 	 */
-	//private int round = 1;
 	private State round;
 	/**
 	 * Integer representing the current amount of chips that have been bet on
@@ -64,10 +63,7 @@ public class FreeHoldEm {
 
 	private int currentBet = 0;
 	private int bigBlindPlayer = 1;
-	private int smallBlindPlayer = 0;
-	private final int BIG_BLIND = 10;
-	private final int LITTLE_BLIND = 5;
-	
+
 	/**
 	 * Constructor used for testing purposes. The game will be initialized with
 	 * the cards passed to the constructor.
@@ -129,6 +125,15 @@ public class FreeHoldEm {
 		Round currentRound = new Round(players, bigBlindPlayer, round);
 		currentRound.bet(cardsOnTable);
 		pot += currentRound.sumBets();
+		rotateBlinds();
+	}
+
+	private void rotateBlinds() {
+		if (bigBlindPlayer < players.size() - 1) {
+			bigBlindPlayer++;
+		} else {
+			bigBlindPlayer = 0;
+		}
 	}
 
 	void pickWinner() {
@@ -158,7 +163,6 @@ public class FreeHoldEm {
 	void newHand() {
 		pot = 0;
 		bigBlindPlayer++;
-		smallBlindPlayer++;
 		for (Player player : players) {
 			if (player.getChips() > 0) {
 				player.unFold();

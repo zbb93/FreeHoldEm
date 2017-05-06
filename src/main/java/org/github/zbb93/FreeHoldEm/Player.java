@@ -170,5 +170,5 @@ public abstract class Player {
 		return Joiner.on(',').join(hand);
 	}
 
-	public abstract int bet(List<Card> cardsOnTable, FreeHoldEm.State round, int currentBet);
+	public abstract int bet(List<Card> cardsOnTable, FreeHoldEm.State round, int amountToCall);
 }
