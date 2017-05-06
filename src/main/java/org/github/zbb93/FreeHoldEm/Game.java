@@ -17,7 +17,6 @@ public class Game {
 	public static void main(String[] args) {
 		//Creates a new file or loads a existing file. 
 		highScoreFile = new HighScoreFile("high_scores.dat");
-		//Creates dummy highscores if there are no previous highscores.
 		highScoreFile.writeDummyHighScoresIfNecessary();
 		assignHighScores(highScoreFile);
 		System.out.print("Enter your name: ");

@@ -16,27 +16,30 @@
  */
 package org.github.zbb93.FreeHoldEm;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import java.io.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 
 public class HighScoreFile {
 	private final File highScoreFile;
-	private List<HighScore> highscores = Lists.newArrayList();
-	private String path = "";
+	private List<HighScore> highscores;
+	private String path;
 	
 	public HighScoreFile(String path) {
+		highscores = Lists.newArrayList();
 		highScoreFile = new File(path);
 		this.path = path;
-		//If file exists, try to load highscores into highscores variable.
+
 		if (highScoreFile.exists()) {
 			loadFile();
 			sortHighScores();
-		}
-		else {
+		} else {
 			try {
 				if(!highScoreFile.createNewFile()) {
 					handleIoException(new IOException("Cannot create a new highscore file."));
@@ -45,7 +48,6 @@ public class HighScoreFile {
 				handleIoException(e);
 			}
 		}
-		
 	}
 
 	private void handleIoException(IOException e) {
@@ -59,12 +61,15 @@ public class HighScoreFile {
 	public List<HighScore> getHighScoreList() {
 		return highscores;
 	}
+
 	public void addHighScore(HighScore h) {
 		highscores.add(h);
 	}
+
 	public int numberOfHighScores() {
 		return highscores.size();
 	}
+
 	/**
 	 * Sorts loaded highscores by descending order.
 	 */
@@ -107,29 +112,15 @@ public class HighScoreFile {
 	 * Writes all highscores from variable "highscores" to file.
 	 */
 	public void writePlayersIntoFile() {
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new FileWriter(path));
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))){
 			for (HighScore hs : highscores) {
 			  writer.write(hs.toString());
 			}
 
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			// todo we can stop printing the throwable once we start using a logging system.
 			//noinspection ThrowablePrintedToSystemOut
 			System.err.println(e);
-		}
-		finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				}
-				catch (IOException e) {
-					//System.err.println(e);
-				  e.printStackTrace();
-				}
-			}
 		}
 	}
 	/**
@@ -137,70 +128,57 @@ public class HighScoreFile {
 	 */
 	private List<HighScore> loadHighScores(Scanner scoreScanner) {
 		List<HighScore> highscores = Lists.newArrayListWithCapacity(10);
-		//Read previous highscores
-		try {
-			while (scoreScanner.hasNext()) {
-				//Read file line
-				String line = scoreScanner.nextLine();
-				//parts[0] is name, parts[1] is score
-				String[] parts = line.split(HighScore.HIGHSCORE_DELIMITER);
-				highscores.add( new HighScore(parts[0], Integer.parseInt(parts[1])) );
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			//System.err.println(e);
-		  e.printStackTrace();
-		}	
+		while (scoreScanner.hasNext()) {
+			String line = scoreScanner.nextLine();
+			//parts[0] is name, parts[1] is score
+			String[] parts = line.split(HighScore.HIGHSCORE_DELIMITER);
+			highscores.add(new HighScore(parts[0], Integer.parseInt(parts[1])));
+		}
 		return highscores;
 	}
 	/**
-	 * Creates dummy highscores if there is no previous ones.
+	 * Creates dummy highscores if there are no existing ones.
 	 */
 	public void writeDummyHighScoresIfNecessary() {
-		//If there is actual highscores already
 		if (highscores.size() > 0 ) {
 			return;
 		}
-		BufferedWriter writer = null;
-		try {			
-			String [] strs = new String[]{"Alice", "Bob", "Jill", "Justin", "David", "Tyler", "John", "Tricia", "John", "Chris", "Becca"};
-			int [] scores = new int[]{100, 250, 500, 666, 750, 875, 950, 1075, 1200, 1340, 1500};
-			writer = new BufferedWriter(new FileWriter(this.path));
-			for (int i = 0; i < scores.length; i++) {
-				HighScore h = new HighScore(strs[i], scores[i]);
-				writer.write(h.toString() );
-				//add highscore also in the list
+
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))){
+			Map<String, Integer> playersToScores = getDummyPlayerMap();
+			for (Map.Entry<String, Integer> entry : playersToScores.entrySet()) {
+				HighScore h = new HighScore(entry.getKey(), entry.getValue());
+				writer.write(h.toString());
 				highscores.add(h);
 			}
-		}
-		catch (IOException e) {
-			//System.err.println(e);
+		} catch (IOException e) {
 		  e.printStackTrace();
 		}
-		finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				}
-				catch (IOException e) {
-				  e.printStackTrace();
-					//System.err.println(e);
-				}
-			}
-		}
 	}
+
+	private Map<String, Integer> getDummyPlayerMap() {
+		Map<String, Integer> toReturn = Maps.newLinkedHashMap();
+		toReturn.put("Alice", 100);
+		toReturn.put("Bob", 250);
+		toReturn.put("Jill", 500);
+		toReturn.put("Justin", 666);
+		toReturn.put("David", 750);
+		toReturn.put("Tyler", 875);
+		toReturn.put("John", 950);
+		toReturn.put("Tricia", 1075);
+		toReturn.put("John", 1200);
+		toReturn.put("Chris", 1340);
+		toReturn.put("Becca", 1500);
+		return ImmutableMap.copyOf(toReturn);
+	}
+
 	/**
 	 * Loads saved highscores from file.
 	 */
 	public void loadFile() {
-		// TODO Auto-generated method stub
-		Scanner scoreScanner;
-		try {
-			scoreScanner = new Scanner(highScoreFile);
+		try (Scanner scoreScanner = new Scanner(highScoreFile)){
 			this.highscores = loadHighScores(scoreScanner);
-			scoreScanner.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
