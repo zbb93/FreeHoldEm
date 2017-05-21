@@ -23,7 +23,8 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 /**
- * This class can be used to quickly put together a deck for testing various AI strategies.
+ * This class can be used to quickly put together a deck for testing various AI strategies. After calling the build
+ * method all internals are reset so a single instance can be reused.
  * Created by zbb on 5/21/17.
  */
 public class DeckBuilder {
@@ -87,6 +88,17 @@ public class DeckBuilder {
 		}
 		cards.addAll(tableCards);
 
-		return new Deck(cards);
+		List<Card> toReturn = Lists.newLinkedList(cards);
+		cleanup();
+		return new Deck(toReturn);
+	}
+
+	/**
+	 * Prepares this DeckBuilder to build another Deck.
+	 */
+	private void cleanup() {
+		cards = Lists.newLinkedList();
+		tableCards = Lists.newLinkedList();
+		playerCards = Lists.newArrayList();
 	}
 }
