@@ -159,11 +159,13 @@ public class FreeHoldEm {
 					winner = player;
 				} else if (winner.getHand().compareTo(player.getHand()) == -1) {
 					winner = player;
-					winner.setChips(winner.getChips() + pot);
 				}
 			}
 		}
-
+		this.winner = winner;
+		if (this.winner != null) {
+			this.winner.setChips(winner.getChips() + pot);
+		}
 	}
 	
 	void newHand() {
