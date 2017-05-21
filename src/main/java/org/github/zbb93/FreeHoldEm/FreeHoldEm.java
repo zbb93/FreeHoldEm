@@ -24,6 +24,7 @@ package org.github.zbb93.FreeHoldEm;
  *       able to ignore hands based solely on cards on the table
  *       (example: a pair of fives on the river shouldn't keep you
  *       from folding if there is nothing else in your hand.)
+ * TODO: Include AI score in high scores?
  */
 
 import com.google.common.collect.Lists;
