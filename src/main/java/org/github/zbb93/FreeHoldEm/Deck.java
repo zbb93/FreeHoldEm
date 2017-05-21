@@ -44,13 +44,22 @@ public class Deck {
 	/**
 	 * Initializes card values and then shuffles the deck.
 	 */
-	public Deck() {
+	Deck() {
 		cards = Lists.newArrayListWithCapacity(52);
 		addCardsOfSuit(Card.Suit.HEARTS);
 		addCardsOfSuit(Card.Suit.DIAMONDS);
 		addCardsOfSuit(Card.Suit.SPADES);
 		addCardsOfSuit(Card.Suit.CLUBS);
 		cards = shuffle();
+	}
+
+	/**
+	 * This constructor can be used for testing purposes (or for cheating ;) ).
+	 * @param cards List of cards that are sorted into the order in which they will be dealt. The constructor will
+	 *              not modify the List.
+	 */
+	Deck(final @NotNull List<Card> cards) {
+		this.cards = ImmutableList.copyOf(cards);
 	}
 
 	/**
@@ -63,6 +72,7 @@ public class Deck {
 		}
 	}
 
+	@NotNull
 	private List<Card> shuffle() {
 		Random numGen = new Random();
 		List<Card> toShuffle = Lists.newArrayList(cards);
