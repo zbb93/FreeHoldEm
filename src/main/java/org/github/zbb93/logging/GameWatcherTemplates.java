@@ -22,6 +22,6 @@ package org.github.zbb93.logging;
  * Created by zbb on 5/21/17.
  */
 class GameWatcherTemplates {
-	static final String PLAYER_BET = "%s bets %d chips";
+	static final String PLAYER_BET = "%s bets %d chips\n";
 	static final String EXCEPTION_HAS_OCCURRED = "An exception has occured:\n %s\n\n Current game state: %s\n\n";
 }

@@ -63,6 +63,7 @@ public class StdGameWatcher implements GameWatcher {
 	public StdGameWatcher(String outputFilePath, int numPlayers) throws IOException, IllegalStateException {
 		this.numPlayers = numPlayers;
 		gameStateRecorded = false;
+		batch = new StringBuffer();
 		gameFile = new File(outputFilePath);
 		Preconditions.checkState(gameFile.createNewFile(), "An error occurred while trying to create the " +
 				"log file.");
@@ -75,6 +76,7 @@ public class StdGameWatcher implements GameWatcher {
 		gameStateRecorded = true;
 	}
 
+	// todo this method needs to be refactored so that we can record each action taken, not just the total bet.
 	public void playerBet(String playerName, int amountBet) throws IOException {
 		currentBatchSize++;
 		String output = String.format(GameWatcherTemplates.PLAYER_BET, playerName, amountBet);
@@ -96,7 +98,7 @@ public class StdGameWatcher implements GameWatcher {
 	 * 										 be asked if they would like to continue.
 	 */
 	private void flush() throws IOException {
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(gameFile))) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(gameFile, true))) {
 			batch.append("\n\n");
 			bw.write(batch.toString());
 		}

@@ -32,6 +32,7 @@ import com.google.common.collect.Lists;
 import org.github.zbb93.logging.GameWatcher;
 import org.github.zbb93.logging.NoOpGameWatcher;
 import org.github.zbb93.logging.StdGameWatcher;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -44,21 +45,24 @@ public class FreeHoldEm {
 	enum State {
 		INIT, FLOP, TURN, RIVER, CLEAN_UP
 	}
+
 	/**
-	 * Array of players. As players run out of chips they are not removed from the
-	 * array, but they are permanently folded.
+	 * List of players. As players run out of chips they are not removed from the
+	 * List, but they are permanently folded.
 	 */
 	private List<Player> players;
+
 	/**
-	 * Community cards currently in play. Note this array does not contain the
+	 * Community cards currently in play. Note this List does not contain the
 	 * cards that each player has been dealt
 	 */
 	private List<Card> cardsOnTable;
+
 	/**
-	 * Integer used to describe the current phase of the game. Used by the AI to
-	 * determine when the AI should fold when they have no hand.
+	 * Describes the current phase of the game. Used by the AI to determine when they should fold if they have no hand.
 	 */
 	private State round;
+
 	/**
 	 * Integer representing the current amount of chips that have been bet on
 	 * this hand.
@@ -71,10 +75,11 @@ public class FreeHoldEm {
 	private int bigBlindPlayer = 1;
 
 	/**
-	 * This variable controls whether or not AI hands are printed during gameplay. Should only be true for development
+	 * This variable controls whether or not AI hands are printed during game play. Should only be true for development
 	 * purposes unless you want ez mode.
+	 * todo: should be set by command line or maven parameter.
 	 */
-	private boolean developmentMode = false;
+	private boolean developmentMode = true;
 
 	/**
 	 * This variable will be null until the FreeHoldEm#pickWinner method is called. If there is a winner then this
@@ -115,7 +120,7 @@ public class FreeHoldEm {
 	private void initGameWatcher(int numPlayers) {
 		try {
 			long timestamp = Instant.now().toEpochMilli();
-			String filepath = String.valueOf(timestamp);
+			String filepath = String.valueOf(timestamp) + ".log";
 			gameWatcher = new StdGameWatcher(filepath, numPlayers);
 		} catch (IOException | IllegalStateException e) {
 			// todo record full path to file.
@@ -190,7 +195,7 @@ public class FreeHoldEm {
 		rotateBlinds();
 	}
 
-	private void recordBets(Round round) {
+	private void recordBets(@NotNull Round round) {
 		try {
 			round.recordBets();
 		} catch (IOException e) {
