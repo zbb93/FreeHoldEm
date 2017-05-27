@@ -72,6 +72,7 @@ public class StdGameWatcher implements GameWatcher {
 		Preconditions.checkState(currentBatchSize == 0, "This method should not be called after " +
 				"player bets have been recorded.");
 		batch.append(gameState);
+		gameStateRecorded = true;
 	}
 
 	public void playerBet(String playerName, int amountBet) throws IOException {
@@ -80,8 +81,7 @@ public class StdGameWatcher implements GameWatcher {
 		batch.append(output);
 
 		if (!(currentBatchSize < numPlayers)) {
-			// todo why was this added
-//			Preconditions.checkState(gameStateRecorded);
+			Preconditions.checkState(gameStateRecorded);
 			flush();
 		}
 	}
@@ -100,7 +100,8 @@ public class StdGameWatcher implements GameWatcher {
 			batch.append("\n\n");
 			bw.write(batch.toString());
 		}
-		currentBatchSize = 0;
 		batch = new StringBuffer();
+		currentBatchSize = 0;
+		gameStateRecorded = false;
 	}
 }
