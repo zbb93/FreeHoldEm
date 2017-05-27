@@ -27,6 +27,7 @@ package org.github.zbb93.FreeHoldEm;
  * TODO: Include AI score in high scores?
  */
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.github.zbb93.logging.GameWatcher;
 import org.github.zbb93.logging.NoOpGameWatcher;
@@ -41,7 +42,7 @@ import java.util.List;
  */
 public class FreeHoldEm {
 	enum State {
-		INIT, FIRST, FLOP, TURN, RIVER, CLEAN_UP
+		INIT, FLOP, TURN, RIVER, CLEAN_UP
 	}
 	/**
 	 * Array of players. As players run out of chips they are not removed from the
@@ -98,26 +99,28 @@ public class FreeHoldEm {
 	}
 
 	FreeHoldEm(int numPlayers, String playerName) {
-		gameWatcher = initGameWatcher(numPlayers);
+		initGameWatcher(numPlayers);
 		cardsOnTable = Lists.newArrayListWithCapacity(5);
 		initPlayers(numPlayers, playerName);
 		round = State.INIT;
 	}
 
-	private GameWatcher initGameWatcher(int numPlayers) {
-		GameWatcher gameWatcher;
+	/**
+	 * Initializes the logging system. If an error occurs the user will be asked if they would like to continue with
+	 * logging functionality. If they elect to proceed a NoOpGameWatcher will be used to allow the game to continue
+	 * normally.
+	 * @param numPlayers number of players in the game. This is used by the GameWatcher to batch output.
+	 * @throws RuntimeException if the user does not want to continue with logging functionality disabled.
+	 */
+	private void initGameWatcher(int numPlayers) {
 		try {
 			long timestamp = Instant.now().toEpochMilli();
 			String filepath = String.valueOf(timestamp);
 			gameWatcher = new StdGameWatcher(filepath, numPlayers);
 		} catch (IOException | IllegalStateException e) {
-			boolean keepPlaying = Game.playWithoutLogging();
-			if (!keepPlaying) {
-				throw new RuntimeException("Unable to create log file!", e);
-			}
-			gameWatcher = new NoOpGameWatcher();
+			// todo record full path to file.
+			handleLoggingException("Unable to create log file", e);
 		}
-		return gameWatcher;
 	}
 
 	private void initPlayers(int numPlayers, String playerName) {
@@ -129,31 +132,48 @@ public class FreeHoldEm {
 					String.valueOf(i)));
 		}
 	}
-	
+
+	/**
+	 * This should be the first method called after initialization (for a normal game). It will deal player hands from
+	 * the deck. Following this method players will be ready for the first round of betting.
+	 * @throws IllegalStateException if round is not equal to State.INIT
+	 */
 	void dealHands() {
+		Preconditions.checkState(round == State.INIT);
+
 		for (Player player : players) {
 			if (!player.isFolded()) {
 				player.setCard(0, deck.getNextCard());
 				player.setCard(1, deck.getNextCard());
 			}
 		}
+		gameWatcher.recordGameState(toString());
 	}
 	
 	void dealFlop() {
+		Preconditions.checkState(round == State.INIT);
+
 		round = State.FLOP;
 		cardsOnTable.add(deck.getNextCard());
 		cardsOnTable.add(deck.getNextCard());
 		cardsOnTable.add(deck.getNextCard());
+		gameWatcher.recordGameState(toString());
 	}
 	
 	void dealTurn() {
+		Preconditions.checkState(round == State.FLOP);
+
 		round = State.TURN;
 		cardsOnTable.add(deck.getNextCard());
+		gameWatcher.recordGameState(toString());
 	}
 	
 	void dealRiver() {
+		Preconditions.checkState(round == State.TURN);
+
 		round = State.RIVER;
 		cardsOnTable.add(deck.getNextCard());
+		gameWatcher.recordGameState(toString());
 	}
 
 	/**
@@ -163,10 +183,19 @@ public class FreeHoldEm {
 	 * Betting continues and the remaining players must match the new bet.
 	 */
 	void bet() {
-		Round currentRound = new Round(players, bigBlindPlayer, round);
+		Round currentRound = new Round(players, bigBlindPlayer, round, gameWatcher);
 		currentRound.bet(cardsOnTable);
+		recordBets(currentRound);
 		pot += currentRound.sumBets();
 		rotateBlinds();
+	}
+
+	private void recordBets(Round round) {
+		try {
+			round.recordBets();
+		} catch (IOException e) {
+			handleLoggingException("An error occurred while attempting to record player bets.", e);
+		}
 	}
 
 	private void rotateBlinds() {
@@ -271,5 +300,13 @@ public class FreeHoldEm {
 			}
 		}
 		return sb.toString();
+	}
+
+	private void handleLoggingException(String errorMsg, Throwable throwable) {
+		if (Game.playWithoutLogging()) {
+			gameWatcher = new NoOpGameWatcher();
+		} else {
+			throw new RuntimeException(errorMsg, throwable);
+		}
 	}
 }

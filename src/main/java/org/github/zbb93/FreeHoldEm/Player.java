@@ -171,4 +171,8 @@ public abstract class Player {
 	}
 
 	public abstract int bet(List<Card> cardsOnTable, FreeHoldEm.State round, int amountToCall);
+
+	public enum Action {
+		CALL, RAISE, CHECK, FOLD
+	}
 }

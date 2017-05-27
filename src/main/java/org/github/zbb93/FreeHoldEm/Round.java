@@ -19,8 +19,10 @@ package org.github.zbb93.FreeHoldEm;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.github.zbb93.logging.GameWatcher;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,14 +35,19 @@ import java.util.Set;
 public class Round {
 
 	private @NotNull Map<Player, Integer> playersToBets;
+	private @NotNull Map<Player, Integer> master;
 	private int bet;
 	private final @NotNull FreeHoldEm.State round;
+	private final @NotNull GameWatcher gameWatcher;
 
 	private static final int LITTLE_BLIND = 5;
 	private static final int BIG_BLIND = 10;
 
-	public Round(@NotNull List<Player> players, int bigBlindPlayer, @NotNull FreeHoldEm.State round) {
+	public Round(@NotNull List<Player> players, int bigBlindPlayer,
+							 @NotNull FreeHoldEm.State round, @NotNull GameWatcher gameWatcher) {
+		this.gameWatcher = gameWatcher;
 		playersToBets = initPlayerMap(sortPlayersIntoInitialBettingOrder(players, bigBlindPlayer));
+		master = Maps.newHashMap(playersToBets);
 		int littleBlindPlayer;
 		if (bigBlindPlayer == 0) {
 			littleBlindPlayer = players.size() - 1;
@@ -84,7 +91,9 @@ public class Round {
 
 	private void placeBlindBets(@NotNull Player bigBlindPlayer, @NotNull Player littleBlindPlayer) {
 		playersToBets.put(bigBlindPlayer, BIG_BLIND);
+		master.put(bigBlindPlayer, BIG_BLIND);
 		playersToBets.put(littleBlindPlayer, LITTLE_BLIND);
+		master.put(littleBlindPlayer, LITTLE_BLIND);
 		bet = BIG_BLIND;
 	}
 
@@ -97,6 +106,7 @@ public class Round {
 		return toReturn;
 	}
 
+	// todo this method needs to be refactored so that we can log better.
 	public void bet(@NotNull List<Card> cardsOnTable) {
 		if (playersToBets.size() > 1) {
 			for (Map.Entry<Player, Integer> entry : playersToBets.entrySet()) {
@@ -107,9 +117,11 @@ public class Round {
 					player.fold();
 				} else if (currentPlayerBet == bet) {
 					entry.setValue(currentPlayerBet);
+					master.put(player, master.get(player) + currentPlayerBet);
 				} else {
 					// start over again
 					entry.setValue(currentPlayerBet);
+					master.put(player, master.get(player) + currentPlayerBet);
 					prepareForNewBettingOrder(player);
 					bet(cardsOnTable);
 					bet = currentPlayerBet;
@@ -148,6 +160,12 @@ public class Round {
 			}
 		}
 		return newBettingOrder;
+	}
+
+	public void recordBets() throws IOException {
+		for (Map.Entry<Player, Integer> entry : master.entrySet()) {
+			gameWatcher.playerBet(entry.getKey().getName(), entry.getValue());
+		}
 	}
 
 	public int sumBets() {
