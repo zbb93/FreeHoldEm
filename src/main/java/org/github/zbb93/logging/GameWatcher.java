@@ -40,4 +40,6 @@ public interface GameWatcher {
 	void playerBet(String playerName, int amountBet) throws IOException;
 
 	void exception(Throwable e, String gameState);
+
+	void flush() throws IOException;
 }

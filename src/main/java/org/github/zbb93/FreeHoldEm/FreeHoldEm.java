@@ -104,7 +104,7 @@ public class FreeHoldEm {
 	}
 
 	FreeHoldEm(int numPlayers, String playerName) {
-		initGameWatcher(numPlayers);
+		initGameWatcher();
 		cardsOnTable = Lists.newArrayListWithCapacity(5);
 		initPlayers(numPlayers, playerName);
 		round = State.INIT;
@@ -114,14 +114,13 @@ public class FreeHoldEm {
 	 * Initializes the logging system. If an error occurs the user will be asked if they would like to continue with
 	 * logging functionality. If they elect to proceed a NoOpGameWatcher will be used to allow the game to continue
 	 * normally.
-	 * @param numPlayers number of players in the game. This is used by the GameWatcher to batch output.
 	 * @throws RuntimeException if the user does not want to continue with logging functionality disabled.
 	 */
-	private void initGameWatcher(int numPlayers) {
+	private void initGameWatcher() {
 		try {
 			long timestamp = Instant.now().toEpochMilli();
 			String filepath = String.valueOf(timestamp) + ".log";
-			gameWatcher = new StdGameWatcher(filepath, numPlayers);
+			gameWatcher = new StdGameWatcher(filepath);
 		} catch (IOException | IllegalStateException e) {
 			// todo record full path to file.
 			handleLoggingException("Unable to create log file", e);

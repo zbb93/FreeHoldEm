@@ -166,6 +166,7 @@ public class Round {
 		for (Map.Entry<Player, Integer> entry : master.entrySet()) {
 			gameWatcher.playerBet(entry.getKey().getName(), entry.getValue());
 		}
+		gameWatcher.flush();
 	}
 
 	public int sumBets() {

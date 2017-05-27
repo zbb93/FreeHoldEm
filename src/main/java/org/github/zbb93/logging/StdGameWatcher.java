@@ -35,22 +35,9 @@ public class StdGameWatcher implements GameWatcher {
 	private File gameFile;
 
 	/**
-	 * This variable is used to allow us to gather the write operations to the output file into manageable batches.
-	 */
-	private int numPlayers;
-
-	/**
 	 * The current batch of output. After each round of gameplay the buffer will be flushed.
 	 */
 	private StringBuffer batch;
-
-	/**
-	 * Used to keep track of the size of the current batch. When this variable equals numPlayers we know that the
-	 * current round has concluded and we can flush the current batch to the file.
-	 */
-	private int currentBatchSize;
-
-	private boolean gameStateRecorded;
 
 	/**
 	 * Initializes the logging system.
@@ -60,9 +47,7 @@ public class StdGameWatcher implements GameWatcher {
 	 * @throws IllegalStateException if the file cannot be created, but an IOException does not occur. This exception
 	 * 															 should be caught and the user will be asked if they would like to continue.
 	 */
-	public StdGameWatcher(String outputFilePath, int numPlayers) throws IOException, IllegalStateException {
-		this.numPlayers = numPlayers;
-		gameStateRecorded = false;
+	public StdGameWatcher(String outputFilePath) throws IOException, IllegalStateException {
 		batch = new StringBuffer();
 		gameFile = new File(outputFilePath);
 		Preconditions.checkState(gameFile.createNewFile(), "An error occurred while trying to create the " +
@@ -70,22 +55,13 @@ public class StdGameWatcher implements GameWatcher {
 	}
 
 	public void recordGameState(String gameState) {
-		Preconditions.checkState(currentBatchSize == 0, "This method should not be called after " +
-				"player bets have been recorded.");
 		batch.append(gameState);
-		gameStateRecorded = true;
 	}
 
 	// todo this method needs to be refactored so that we can record each action taken, not just the total bet.
 	public void playerBet(String playerName, int amountBet) throws IOException {
-		currentBatchSize++;
 		String output = String.format(GameWatcherTemplates.PLAYER_BET, playerName, amountBet);
 		batch.append(output);
-
-		if (!(currentBatchSize < numPlayers)) {
-			Preconditions.checkState(gameStateRecorded);
-			flush();
-		}
 	}
 
 	public void exception(Throwable e, String gameState) {
@@ -97,13 +73,11 @@ public class StdGameWatcher implements GameWatcher {
 	 * @throws IOException if an error occurs while writing to the file. This exception should be caught and the user will
 	 * 										 be asked if they would like to continue.
 	 */
-	private void flush() throws IOException {
+	public void flush() throws IOException {
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(gameFile, true))) {
 			batch.append("\n\n");
 			bw.write(batch.toString());
 		}
 		batch = new StringBuffer();
-		currentBatchSize = 0;
-		gameStateRecorded = false;
 	}
 }

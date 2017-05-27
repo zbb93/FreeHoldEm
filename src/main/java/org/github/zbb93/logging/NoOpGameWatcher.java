@@ -33,4 +33,7 @@ public class NoOpGameWatcher implements GameWatcher {
 
 	@Override
 	public void exception(Throwable e, String gameState) {}
+
+	@Override
+	public void flush() throws IOException {}
 }
