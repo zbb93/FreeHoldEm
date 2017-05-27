@@ -152,9 +152,10 @@ public class FreeHoldEm {
 			}
 		}
 		gameWatcher.recordGameState(toString());
+		bet();
 	}
 	
-	void dealFlop() {
+	void flop() {
 		Preconditions.checkState(round == State.INIT);
 
 		round = State.FLOP;
@@ -162,22 +163,25 @@ public class FreeHoldEm {
 		cardsOnTable.add(deck.getNextCard());
 		cardsOnTable.add(deck.getNextCard());
 		gameWatcher.recordGameState(toString());
+		bet();
 	}
 	
-	void dealTurn() {
+	void turn() {
 		Preconditions.checkState(round == State.FLOP);
 
 		round = State.TURN;
 		cardsOnTable.add(deck.getNextCard());
 		gameWatcher.recordGameState(toString());
+		bet();
 	}
 	
-	void dealRiver() {
+	void river() {
 		Preconditions.checkState(round == State.TURN);
 
 		round = State.RIVER;
 		cardsOnTable.add(deck.getNextCard());
 		gameWatcher.recordGameState(toString());
+		bet();
 	}
 
 	/**
@@ -186,7 +190,7 @@ public class FreeHoldEm {
 	 * If a player raises the minimum raise becomes their raise and all future raises must be at least this size.
 	 * Betting continues and the remaining players must match the new bet.
 	 */
-	void bet() {
+	private void bet() {
 		Round currentRound = new Round(players, bigBlindPlayer, round, gameWatcher);
 		currentRound.bet(cardsOnTable);
 		recordBets(currentRound);

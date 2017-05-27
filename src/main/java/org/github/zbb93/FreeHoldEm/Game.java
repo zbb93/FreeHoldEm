@@ -1,5 +1,7 @@
 package org.github.zbb93.FreeHoldEm;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Scanner;
 public class Game {
@@ -12,33 +14,24 @@ public class Game {
      */
 	private static HighScoreFile highScoreFile;
 
-	// todo open and close as needed
-	private static final Scanner sc = new Scanner(System.in);
-	
 	public static void main(String[] args) {
 		//Creates a new file or loads a existing file. 
 		highScoreFile = new HighScoreFile("high_scores.dat");
 		highScoreFile.writeDummyHighScoresIfNecessary();
 		assignHighScores(highScoreFile);
-		System.out.print("Enter your name: ");
-		String playerName = sc.next();
-		System.out.print("Number of players (2 - 8): ");
-		int numberPlayers = sc.nextInt();                
+		String playerName = getPlayerName();
+		int numberPlayers = getNumberOfPlayers();
 		FreeHoldEm game = new FreeHoldEm(numberPlayers, playerName);
 		boolean playing = true;
 		while (playing) {
 			game.dealHands();
 			System.out.println(game.toString());
-			game.bet();
-			game.dealFlop();
+			game.flop();
 			System.out.println(game.toString());
-			game.bet();
-			game.dealTurn();
+			game.turn();
 			System.out.println(game.toString());
-			game.bet();
-			game.dealRiver();
+			game.river();
 			System.out.println(game.toString());
-			game.bet();
 			game.pickWinner();
 			System.out.println(game.toString());
 			if (playAnotherGame()) {
@@ -47,10 +40,28 @@ public class Game {
 				playing = false;
 			}
 		}
-		if (game.getPlayerScore() > highScores.get(highScores.size() - 1).getScore()) {
+		if (newHighScore(game.getPlayerScore())) {
 			writeNewScore(game.getPlayerScore());
 		}
-		
+	}
+
+	@NotNull
+	private static String getPlayerName() {
+		System.out.print("Enter your name: ");
+		String playerName;
+		try (Scanner sc = new Scanner(System.in)) {
+			playerName = sc.next();
+		}
+		return playerName;
+	}
+
+	private static int getNumberOfPlayers() {
+		System.out.print("Number of players (2 - 8): ");
+		int numberOfPlayers;
+		try (Scanner sc = new Scanner(System.in)) {
+			numberOfPlayers = sc.nextInt();
+		}
+		return numberOfPlayers;
 	}
 
 	private static boolean playAnotherGame() {
@@ -65,8 +76,15 @@ public class Game {
 		return playAgain;
 	}
 
+	private static boolean newHighScore(int playerScore) {
+		return playerScore > highScores.get(highScores.size() - 1).getScore();
+	}
+
 	private static boolean getResponseFromPlayer() {
-		String response = sc.next();
+		String response;
+		try (Scanner sc = new Scanner(System.in)) {
+			response = sc.next();
+		}
 		boolean responseAsBoolean;
 		if (response.equalsIgnoreCase("n") || response.equalsIgnoreCase("no")) {
 			responseAsBoolean = false;
@@ -81,7 +99,10 @@ public class Game {
 	static int getBetFromPlayer(int minimumBet) {
 		System.out.println("Amount to call: " + minimumBet);
 		System.out.print("Enter your bet: ");
-		int bet = sc.nextInt();
+		int bet;
+		try (Scanner sc = new Scanner(System.in)) {
+			bet = sc.nextInt();
+		}
 		if (bet < minimumBet && bet != 0) {
 			System.out.println("ERROR: You have entered an invalid bet!");
 			System.out.println("You bet " + bet + " chips, but the required amount to call is "
@@ -106,7 +127,10 @@ public class Game {
 	 */
 	private static void writeNewScore(int newScore) {
 		System.out.printf("High Score!\nEnter your name: ");
-		String name = sc.next();
+		String name;
+		try (Scanner sc = new Scanner(System.in)) {
+			name = sc.next();
+		}
 		HighScore newHighScore = new HighScore(name, newScore);
 		highScoreFile.addHighScore(newHighScore);
 		//Sorts HighScores to descending order
