@@ -11,7 +11,8 @@ public class Game {
      * Handles highScore file I/O.   
      */
 	private static HighScoreFile highScoreFile;
-	
+
+	// todo open and close as needed
 	private static final Scanner sc = new Scanner(System.in);
 	
 	public static void main(String[] args) {
@@ -113,6 +114,14 @@ public class Game {
 		//Write highScores into file.
 		highScoreFile.writePlayersIntoFile();
 		System.out.println(highScoreFile.toString());
+	}
+
+	/**
+	 * @return true if the user answers y/yes; false for n/no.
+	 */
+	static boolean playWithoutLogging() {
+		// todo ask the user if they want to continue playing
+		return true;
 	}
 }
 

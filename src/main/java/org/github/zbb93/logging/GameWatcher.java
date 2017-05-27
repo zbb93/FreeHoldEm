@@ -91,7 +91,8 @@ public class GameWatcher {
 		batch.append(output);
 
 		if (!(currentBatchSize < numPlayers)) {
-			Preconditions.checkState(gameStateRecorded);
+			// todo why was this added
+//			Preconditions.checkState(gameStateRecorded);
 			flush();
 		}
 	}

@@ -28,7 +28,10 @@ package org.github.zbb93.FreeHoldEm;
  */
 
 import com.google.common.collect.Lists;
+import org.github.zbb93.logging.GameWatcher;
 
+import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -78,6 +81,12 @@ public class FreeHoldEm {
 	private Player winner;
 
 	/**
+	 * The logger.
+	 * todo: whats it do? when to use it?
+	 */
+	private GameWatcher gameWatcher;
+
+	/**
 	 * Constructor used for testing purposes. The game will be initialized with
 	 * the cards passed to the constructor.
 	 * @param cards - Array of cards representing cards currently on the table.
@@ -87,9 +96,26 @@ public class FreeHoldEm {
 	}
 
 	FreeHoldEm(int numPlayers, String playerName) {
+		gameWatcher = initGameWatcher(numPlayers);
 		cardsOnTable = Lists.newArrayListWithCapacity(5);
 		initPlayers(numPlayers, playerName);
 		round = State.INIT;
+	}
+
+	private GameWatcher initGameWatcher(int numPlayers) {
+		GameWatcher gameWatcher;
+		try {
+			long timestamp = Instant.now().toEpochMilli();
+			String filepath = String.valueOf(timestamp);
+			gameWatcher = new GameWatcher(filepath, numPlayers);
+		} catch (IOException | IllegalStateException e) {
+			boolean keepPlaying = Game.playWithoutLogging();
+			if (!keepPlaying) {
+				throw new RuntimeException("Unable to create log file!", e);
+			}
+			gameWatcher = null;
+		}
+		return gameWatcher;
 	}
 
 	private void initPlayers(int numPlayers, String playerName) {
