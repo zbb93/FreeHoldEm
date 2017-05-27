@@ -228,6 +228,13 @@ public class FreeHoldEm {
 		if (this.winner != null) {
 			this.winner.setChips(winner.getChips() + pot);
 		}
+
+		gameWatcher.recordGameState(toString());
+		try {
+			gameWatcher.flush();
+		} catch (IOException e) {
+			handleLoggingException("Error occurred persisting game state.", e);
+		}
 	}
 	
 	void newHand() {
