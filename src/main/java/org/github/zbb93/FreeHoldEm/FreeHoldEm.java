@@ -29,6 +29,8 @@ package org.github.zbb93.FreeHoldEm;
 
 import com.google.common.collect.Lists;
 import org.github.zbb93.logging.GameWatcher;
+import org.github.zbb93.logging.NoOpGameWatcher;
+import org.github.zbb93.logging.StdGameWatcher;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -107,13 +109,13 @@ public class FreeHoldEm {
 		try {
 			long timestamp = Instant.now().toEpochMilli();
 			String filepath = String.valueOf(timestamp);
-			gameWatcher = new GameWatcher(filepath, numPlayers);
+			gameWatcher = new StdGameWatcher(filepath, numPlayers);
 		} catch (IOException | IllegalStateException e) {
 			boolean keepPlaying = Game.playWithoutLogging();
 			if (!keepPlaying) {
 				throw new RuntimeException("Unable to create log file!", e);
 			}
-			gameWatcher = null;
+			gameWatcher = new NoOpGameWatcher();
 		}
 		return gameWatcher;
 	}
