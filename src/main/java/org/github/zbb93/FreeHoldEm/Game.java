@@ -48,20 +48,12 @@ public class Game {
 	@NotNull
 	private static String getPlayerName() {
 		System.out.print("Enter your name: ");
-		String playerName;
-		try (Scanner sc = new Scanner(System.in)) {
-			playerName = sc.next();
-		}
-		return playerName;
+		return getUserInputString();
 	}
 
 	private static int getNumberOfPlayers() {
 		System.out.print("Number of players (2 - 8): ");
-		int numberOfPlayers;
-		try (Scanner sc = new Scanner(System.in)) {
-			numberOfPlayers = sc.nextInt();
-		}
-		return numberOfPlayers;
+		return getUserInputInt();
 	}
 
 	private static boolean playAnotherGame() {
@@ -81,10 +73,7 @@ public class Game {
 	}
 
 	private static boolean getResponseFromPlayer() {
-		String response;
-		try (Scanner sc = new Scanner(System.in)) {
-			response = sc.next();
-		}
+		String response = getUserInputString();
 		boolean responseAsBoolean;
 		if (response.equalsIgnoreCase("n") || response.equalsIgnoreCase("no")) {
 			responseAsBoolean = false;
@@ -99,10 +88,7 @@ public class Game {
 	static int getBetFromPlayer(int minimumBet) {
 		System.out.println("Amount to call: " + minimumBet);
 		System.out.print("Enter your bet: ");
-		int bet;
-		try (Scanner sc = new Scanner(System.in)) {
-			bet = sc.nextInt();
-		}
+		int bet = getUserInputInt();
 		if (bet < minimumBet && bet != 0) {
 			System.out.println("ERROR: You have entered an invalid bet!");
 			System.out.println("You bet " + bet + " chips, but the required amount to call is "
@@ -127,10 +113,7 @@ public class Game {
 	 */
 	private static void writeNewScore(int newScore) {
 		System.out.printf("High Score!\nEnter your name: ");
-		String name;
-		try (Scanner sc = new Scanner(System.in)) {
-			name = sc.next();
-		}
+		String name = getUserInputString();
 		HighScore newHighScore = new HighScore(name, newScore);
 		highScoreFile.addHighScore(newHighScore);
 		//Sorts HighScores to descending order
@@ -146,6 +129,26 @@ public class Game {
 	static boolean playWithoutLogging() {
 		// todo ask the user if they want to continue playing
 		return true;
+	}
+
+	/**
+	 * Opens a Scanner on System.in and returns the value the user inputs as a String.
+	 * @return value entered by user as a String.
+	 */
+	private static String getUserInputString() {
+		try (Scanner sc = new Scanner(System.in)) {
+			return sc.next();
+		}
+	}
+
+	/**
+	 * Opens a Scanner on System.in and returns the next Integer entered by the user.
+	 * @return next Integer entered by the user.
+	 */
+	private static int getUserInputInt() {
+		try (Scanner sc = new Scanner(System.in)) {
+			return sc.nextInt();
+		}
 	}
 }
 
